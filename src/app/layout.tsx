@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/layout/Providers";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { ScrollToTopButton } from "@/components/shared/ScrollToTopButton";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -39,6 +40,7 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <Providers>{children}</Providers>
+          <ScrollToTopButton />
         </ThemeProvider>
       </body>
     </html>

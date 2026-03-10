@@ -5,9 +5,20 @@ import { Tag } from "@/types/tag";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 
-function getErrorMessage(error: AxiosError<{ message?: string }>) {
-  return error.response?.data?.message ?? "Terjadi kesalahan, coba lagi.";
+function getErrorMessage(error: unknown) {
+  const axiosError = error as AxiosError<{ message?: string }>;
+  return axiosError.response?.data?.message ?? "Terjadi kesalahan, coba lagi.";
 }
+
+type TagPaginated = {
+  data: Tag[];
+  meta: {
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+  };
+};
 
 export const tagKeys = {
   all: ["tags"] as const,
@@ -58,12 +69,49 @@ export function useUpdateTag() {
       slug: string;
       payload: { name: string };
     }) => tagService.update(slug, payload),
+    onMutate: async ({ slug, payload }) => {
+      await queryClient.cancelQueries({ queryKey: tagKeys.all });
+
+      const previousLists = queryClient.getQueriesData<TagPaginated>({
+        queryKey: tagKeys.all,
+      });
+
+      queryClient.setQueriesData<TagPaginated>(
+        { queryKey: tagKeys.all },
+        (old) => {
+          if (!old?.data) return old;
+          return {
+            ...old,
+            data: old.data.map((tag) =>
+              tag.slug === slug
+                ? {
+                    ...tag,
+                    name: payload.name,
+                    slug: payload.name
+                      .toLowerCase()
+                      .trim()
+                      .replace(/\s+/g, "-"),
+                  }
+                : tag,
+            ),
+          };
+        },
+      );
+
+      return { previousLists };
+    },
+    onError: (error, _variables, context) => {
+      context?.previousLists?.forEach(([key, value]) => {
+        queryClient.setQueryData(key, value);
+      });
+      toast.error(getErrorMessage(error));
+    },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: tagKeys.all });
       toast.success("Tag berhasil diperbarui");
     },
-    onError: (error: AxiosError<{ message?: string }>) => {
-      toast.error(getErrorMessage(error));
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey: tagKeys.all });
     },
   });
 }
@@ -72,12 +120,42 @@ export function useDeleteTag() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (slug: string) => tagService.delete(slug),
+    onMutate: async (slug) => {
+      await queryClient.cancelQueries({ queryKey: tagKeys.all });
+
+      const previousLists = queryClient.getQueriesData<TagPaginated>({
+        queryKey: tagKeys.all,
+      });
+
+      queryClient.setQueriesData<TagPaginated>(
+        { queryKey: tagKeys.all },
+        (old) => {
+          if (!old?.data) return old;
+          return {
+            ...old,
+            data: old.data.filter((tag) => tag.slug !== slug),
+            meta: {
+              ...old.meta,
+              total: Math.max(0, old.meta.total - 1),
+            },
+          };
+        },
+      );
+
+      return { previousLists };
+    },
+    onError: (error, _variables, context) => {
+      context?.previousLists?.forEach(([key, value]) => {
+        queryClient.setQueryData(key, value);
+      });
+      toast.error(getErrorMessage(error));
+    },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: tagKeys.all });
       toast.success("Tag berhasil dihapus");
     },
-    onError: (error: AxiosError<{ message?: string }>) => {
-      toast.error(getErrorMessage(error));
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey: tagKeys.all });
     },
   });
 }
