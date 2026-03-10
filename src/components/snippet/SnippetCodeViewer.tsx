@@ -40,11 +40,11 @@ export function SnippetCodeViewer({
         </div>
       </div>
       <div
-        className={`overflow-x-auto dark:hidden [&_pre]:m-0! [&_pre]:p-5! [&_pre]:text-sm [&_pre]:leading-relaxed ${wrapLines ? "[&_pre]:whitespace-pre-wrap [&_pre]:break-words" : ""}`}
+        className={`overflow-x-auto dark:hidden [&_pre]:m-0! [&_pre]:p-5! [&_pre]:text-sm [&_pre]:leading-relaxed ${wrapLines ? "[&_pre]:whitespace-pre-wrap [&_pre]:wrap-break-word" : ""}`}
         dangerouslySetInnerHTML={{ __html: lightHtml }}
       />
       <div
-        className={`hidden overflow-x-auto dark:block [&_pre]:m-0! [&_pre]:p-5! [&_pre]:text-sm [&_pre]:leading-relaxed ${wrapLines ? "[&_pre]:whitespace-pre-wrap [&_pre]:break-words" : ""}`}
+        className={`hidden overflow-x-auto dark:block [&_pre]:m-0! [&_pre]:p-5! [&_pre]:text-sm [&_pre]:leading-relaxed ${wrapLines ? "[&_pre]:whitespace-pre-wrap [&_pre]:wrap-break-word" : ""}`}
         dangerouslySetInnerHTML={{ __html: darkHtml }}
       />
     </div>
