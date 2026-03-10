@@ -3,7 +3,7 @@
 import { useParams } from "next/navigation";
 import { useArticle } from "@/hooks/useArticles";
 import { TagBadge } from "@/components/shared/TagBadge";
-import { Skeleton } from "@/components/ui/skeleton";
+import { ArticleDetailSkeleton } from "@/components/shared/ContentSkeletons";
 import { Eye, Clock, ArrowLeft } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { id } from "date-fns/locale";
@@ -15,18 +15,7 @@ export default function ArticleDetailPage() {
   const { data: article, isLoading } = useArticle(slug);
 
   if (isLoading) {
-    return (
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12 space-y-6">
-        <Skeleton className="h-8 w-24" />
-        <Skeleton className="h-12 w-full" />
-        <Skeleton className="h-6 w-48" />
-        <div className="space-y-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-5 w-full" />
-          ))}
-        </div>
-      </div>
-    );
+    return <ArticleDetailSkeleton />;
   }
 
   if (!article) {

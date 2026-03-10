@@ -5,10 +5,10 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useArticles } from "@/hooks/useArticles";
 import { useAllTags } from "@/hooks/useTags";
 import { ArticleCard } from "@/components/article/ArticleCard";
+import { ArticleCardSkeleton } from "@/components/shared/ContentSkeletons";
 import { Pagination } from "@/components/shared/Pagination";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Search, FileText } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 
@@ -109,7 +109,7 @@ export default function ArticlesPage() {
       {isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-52 rounded-xl" />
+            <ArticleCardSkeleton key={i} />
           ))}
         </div>
       ) : data?.data?.length === 0 ? (

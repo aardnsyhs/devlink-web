@@ -7,13 +7,13 @@ import {
   useUpdateTag,
   useDeleteTag,
 } from "@/hooks/useTags";
+import { TagCardSkeleton } from "@/components/shared/ContentSkeletons";
 import { TagFormDialog } from "@/components/tag/TagFormDialog";
 import { DeleteDialog } from "@/components/shared/DeleteDialog";
 import { TagSchema } from "@/lib/validations/tag";
 import { Tag } from "@/types/tag";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Plus, Pencil, Tags, Search } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
@@ -101,7 +101,7 @@ export default function DashboardTagsPage() {
       {isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {Array.from({ length: 9 }).map((_, i) => (
-            <Skeleton key={i} className="h-20 rounded-xl" />
+            <TagCardSkeleton key={i} />
           ))}
         </div>
       ) : data?.data?.length === 0 ? (

@@ -8,12 +8,12 @@ import {
   useDeleteArticle,
 } from "@/hooks/useArticles";
 import { ArticleForm } from "@/components/article/ArticleForm";
+import { DashboardTableRowSkeleton } from "@/components/shared/ContentSkeletons";
 import { DeleteDialog } from "@/components/shared/DeleteDialog";
 import { ArticleSchema } from "@/lib/validations/article";
 import { Article } from "@/types/article";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
   DialogContent,
@@ -116,9 +116,9 @@ export default function DashboardArticlesPage() {
           </p>
         </div>
         {isLoading ? (
-          <div className="p-6 space-y-4">
+          <div>
             {Array.from({ length: 5 }).map((_, i) => (
-              <Skeleton key={i} className="h-14 rounded-lg" />
+              <DashboardTableRowSkeleton key={i} />
             ))}
           </div>
         ) : data?.data?.length === 0 ? (

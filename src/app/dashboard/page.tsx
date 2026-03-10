@@ -4,8 +4,11 @@ import { useAuthStore } from "@/store/authStore";
 import { useArticles } from "@/hooks/useArticles";
 import { useSnippets } from "@/hooks/useSnippets";
 import { StatCard } from "@/components/shared/StatCard";
+import {
+  DashboardListItemSkeleton,
+  DashboardStatCardSkeleton,
+} from "@/components/shared/ContentSkeletons";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { FileText, Code2, Eye, TrendingUp } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { id } from "date-fns/locale";
@@ -44,7 +47,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {loadingArticles || loadingSnippets ? (
           Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-28 rounded-xl" />
+            <DashboardStatCardSkeleton key={i} />
           ))
         ) : (
           <>
@@ -91,7 +94,7 @@ export default function DashboardPage() {
           {loadingArticles ? (
             <div className="space-y-3">
               {Array.from({ length: 3 }).map((_, i) => (
-                <Skeleton key={i} className="h-14 rounded-lg" />
+                <DashboardListItemSkeleton key={i} />
               ))}
             </div>
           ) : articles?.data?.length === 0 ? (
@@ -144,7 +147,7 @@ export default function DashboardPage() {
           {loadingSnippets ? (
             <div className="space-y-3">
               {Array.from({ length: 3 }).map((_, i) => (
-                <Skeleton key={i} className="h-14 rounded-lg" />
+                <DashboardListItemSkeleton key={i} />
               ))}
             </div>
           ) : snippets?.data?.length === 0 ? (

@@ -8,12 +8,12 @@ import {
   useUpdateSnippet,
 } from "@/hooks/useSnippets";
 import { SnippetForm } from "@/components/snippet/SnippetForm";
+import { DashboardTableRowSkeleton } from "@/components/shared/ContentSkeletons";
 import { DeleteDialog } from "@/components/shared/DeleteDialog";
 import { SnippetSchema } from "@/lib/validations/snippet";
 import { Snippet } from "@/types/snippet";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
   DialogContent,
@@ -124,9 +124,9 @@ export default function DashboardSnippetsPage() {
           </p>
         </div>
         {isLoading ? (
-          <div className="p-6 space-y-4">
+          <div>
             {Array.from({ length: 5 }).map((_, i) => (
-              <Skeleton key={i} className="h-12 rounded-lg" />
+              <DashboardTableRowSkeleton key={i} />
             ))}
           </div>
         ) : data?.data?.length === 0 ? (
