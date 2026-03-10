@@ -15,6 +15,39 @@ export function useArticles(params?: Record<string, unknown>) {
   });
 }
 
+export function useArticle(slug: string) {
+  return useQuery({
+    queryKey: articleKeys.detail(slug),
+    queryFn: () => articleService.getBySlug(slug).then((r) => r.data.data),
+    enabled: !!slug,
+  });
+}
+
+export function useCreateArticle() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: Record<string, unknown>) =>
+      articleService.create(payload),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: articleKeys.all }),
+  });
+}
+
+export function useUpdateArticle() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      slug,
+      payload,
+    }: {
+      slug: string;
+      payload: Record<string, unknown>;
+    }) => articleService.update(slug, payload),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: articleKeys.all }),
+  });
+}
+
 export function useDeleteArticle() {
   const queryClient = useQueryClient();
   return useMutation({
