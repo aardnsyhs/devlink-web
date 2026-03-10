@@ -4,7 +4,7 @@ const protectedRoutes = ["/dashboard"];
 const authRoutes = ["/login", "/register"];
 const AUTH_COOKIE_NAME = "devlink-token";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const token = request.cookies.get(AUTH_COOKIE_NAME)?.value;
   const isAuthenticated = !!token;
 

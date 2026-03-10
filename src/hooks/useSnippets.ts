@@ -15,6 +15,39 @@ export function useSnippets(params?: Record<string, unknown>) {
   });
 }
 
+export function useSnippet(slug: string) {
+  return useQuery({
+    queryKey: snippetKeys.detail(slug),
+    queryFn: () => snippetService.getBySlug(slug).then((r) => r.data.data),
+    enabled: !!slug,
+  });
+}
+
+export function useCreateSnippet() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: Record<string, unknown>) =>
+      snippetService.create(payload),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: snippetKeys.all }),
+  });
+}
+
+export function useUpdateSnippet() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      slug,
+      payload,
+    }: {
+      slug: string;
+      payload: Record<string, unknown>;
+    }) => snippetService.update(slug, payload),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: snippetKeys.all }),
+  });
+}
+
 export function useDeleteSnippet() {
   const queryClient = useQueryClient();
   return useMutation({
