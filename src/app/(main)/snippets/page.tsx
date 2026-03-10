@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useSnippets } from "@/hooks/useSnippets";
 import { useAllTags } from "@/hooks/useTags";
 import { SnippetCard } from "@/components/snippet/SnippetCard";
@@ -26,19 +26,33 @@ const LANGUAGES = [
 export default function SnippetsPage() {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
-  const [page, setPage] = useState(() => {
-    const initialPage = Number(searchParams.get("page") ?? "1");
-    return Number.isFinite(initialPage) && initialPage > 0 ? initialPage : 1;
-  });
-  const [search, setSearch] = useState(() => searchParams.get("search") ?? "");
-  const [activeLang, setActiveLang] = useState<string | null>(
-    () => searchParams.get("language") ?? null,
-  );
-  const [activeTag, setActiveTag] = useState<string | null>(
-    () => searchParams.get("tag") ?? null,
-  );
+  const readUrlState = () => {
+    if (typeof window === "undefined") {
+      return {
+        search: "",
+        language: null as string | null,
+        tag: null as string | null,
+        page: 1,
+      };
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const rawPage = Number(params.get("page") ?? "1");
+
+    return {
+      search: params.get("search") ?? "",
+      language: params.get("language") ?? null,
+      tag: params.get("tag") ?? null,
+      page: Number.isFinite(rawPage) && rawPage > 0 ? rawPage : 1,
+    };
+  };
+
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [activeLang, setActiveLang] = useState<string | null>(null);
+  const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [isUrlReady, setIsUrlReady] = useState(false);
 
   const debouncedSearch = useDebounce(search, 400);
   const { data: tags } = useAllTags();
@@ -51,19 +65,23 @@ export default function SnippetsPage() {
   });
 
   useEffect(() => {
-    const urlSearch = searchParams.get("search") ?? "";
-    const urlLang = searchParams.get("language") ?? null;
-    const urlTag = searchParams.get("tag") ?? null;
-    const rawPage = Number(searchParams.get("page") ?? "1");
-    const urlPage = Number.isFinite(rawPage) && rawPage > 0 ? rawPage : 1;
+    const syncFromUrl = () => {
+      const urlState = readUrlState();
+      setSearch(urlState.search);
+      setActiveLang(urlState.language);
+      setActiveTag(urlState.tag);
+      setPage(urlState.page);
+      setIsUrlReady(true);
+    };
 
-    if (urlSearch !== search) setSearch(urlSearch);
-    if (urlLang !== activeLang) setActiveLang(urlLang);
-    if (urlTag !== activeTag) setActiveTag(urlTag);
-    if (urlPage !== page) setPage(urlPage);
-  }, [searchParams]);
+    syncFromUrl();
+    window.addEventListener("popstate", syncFromUrl);
+    return () => window.removeEventListener("popstate", syncFromUrl);
+  }, []);
 
   useEffect(() => {
+    if (!isUrlReady) return;
+
     const params = new URLSearchParams();
 
     if (debouncedSearch.trim()) params.set("search", debouncedSearch.trim());
@@ -72,7 +90,10 @@ export default function SnippetsPage() {
     if (page > 1) params.set("page", String(page));
 
     const nextQuery = params.toString();
-    const currentQuery = searchParams.toString();
+    const currentQuery =
+      typeof window !== "undefined"
+        ? window.location.search.replace(/^\?/, "")
+        : "";
 
     if (nextQuery === currentQuery) return;
 
@@ -80,13 +101,13 @@ export default function SnippetsPage() {
       scroll: false,
     });
   }, [
+    isUrlReady,
     debouncedSearch,
     activeLang,
     activeTag,
     page,
     pathname,
     router,
-    searchParams,
   ]);
 
   return (
