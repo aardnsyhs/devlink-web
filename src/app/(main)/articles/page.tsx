@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useArticles } from "@/hooks/useArticles";
 import { useAllTags } from "@/hooks/useTags";
 import { ArticleCard } from "@/components/article/ArticleCard";
@@ -12,9 +13,18 @@ import { Search, FileText } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 
 export default function ArticlesPage() {
-  const [page, setPage] = useState(1);
-  const [search, setSearch] = useState("");
-  const [activeTag, setActiveTag] = useState<string | null>(null);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const [page, setPage] = useState(() => {
+    const initialPage = Number(searchParams.get("page") ?? "1");
+    return Number.isFinite(initialPage) && initialPage > 0 ? initialPage : 1;
+  });
+  const [search, setSearch] = useState(() => searchParams.get("search") ?? "");
+  const [activeTag, setActiveTag] = useState<string | null>(
+    () => searchParams.get("tag") ?? null,
+  );
 
   const debouncedSearch = useDebounce(search, 400);
   const { data: tags } = useAllTags();
@@ -30,6 +40,34 @@ export default function ArticlesPage() {
     setPage(1);
   };
 
+  useEffect(() => {
+    const urlSearch = searchParams.get("search") ?? "";
+    const urlTag = searchParams.get("tag") ?? null;
+    const rawPage = Number(searchParams.get("page") ?? "1");
+    const urlPage = Number.isFinite(rawPage) && rawPage > 0 ? rawPage : 1;
+
+    if (urlSearch !== search) setSearch(urlSearch);
+    if (urlTag !== activeTag) setActiveTag(urlTag);
+    if (urlPage !== page) setPage(urlPage);
+  }, [searchParams]);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+
+    if (debouncedSearch.trim()) params.set("search", debouncedSearch.trim());
+    if (activeTag) params.set("tag", activeTag);
+    if (page > 1) params.set("page", String(page));
+
+    const nextQuery = params.toString();
+    const currentQuery = searchParams.toString();
+
+    if (nextQuery === currentQuery) return;
+
+    router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, {
+      scroll: false,
+    });
+  }, [debouncedSearch, activeTag, page, pathname, router, searchParams]);
+
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 space-y-8">
       <div>
@@ -42,7 +80,7 @@ export default function ArticlesPage() {
       </div>
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -tranzinc-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Cari artikel..."
             value={search}

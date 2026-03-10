@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useSnippets } from "@/hooks/useSnippets";
 import { useAllTags } from "@/hooks/useTags";
 import { SnippetCard } from "@/components/snippet/SnippetCard";
@@ -22,10 +23,21 @@ const LANGUAGES = [
 ];
 
 export default function SnippetsPage() {
-  const [page, setPage] = useState(1);
-  const [search, setSearch] = useState("");
-  const [activeLang, setActiveLang] = useState<string | null>(null);
-  const [activeTag, setActiveTag] = useState<string | null>(null);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const [page, setPage] = useState(() => {
+    const initialPage = Number(searchParams.get("page") ?? "1");
+    return Number.isFinite(initialPage) && initialPage > 0 ? initialPage : 1;
+  });
+  const [search, setSearch] = useState(() => searchParams.get("search") ?? "");
+  const [activeLang, setActiveLang] = useState<string | null>(
+    () => searchParams.get("language") ?? null,
+  );
+  const [activeTag, setActiveTag] = useState<string | null>(
+    () => searchParams.get("tag") ?? null,
+  );
 
   const debouncedSearch = useDebounce(search, 400);
   const { data: tags } = useAllTags();
@@ -36,6 +48,45 @@ export default function SnippetsPage() {
     ...(activeLang && { language: activeLang }),
     ...(activeTag && { tag: activeTag }),
   });
+
+  useEffect(() => {
+    const urlSearch = searchParams.get("search") ?? "";
+    const urlLang = searchParams.get("language") ?? null;
+    const urlTag = searchParams.get("tag") ?? null;
+    const rawPage = Number(searchParams.get("page") ?? "1");
+    const urlPage = Number.isFinite(rawPage) && rawPage > 0 ? rawPage : 1;
+
+    if (urlSearch !== search) setSearch(urlSearch);
+    if (urlLang !== activeLang) setActiveLang(urlLang);
+    if (urlTag !== activeTag) setActiveTag(urlTag);
+    if (urlPage !== page) setPage(urlPage);
+  }, [searchParams]);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+
+    if (debouncedSearch.trim()) params.set("search", debouncedSearch.trim());
+    if (activeLang) params.set("language", activeLang);
+    if (activeTag) params.set("tag", activeTag);
+    if (page > 1) params.set("page", String(page));
+
+    const nextQuery = params.toString();
+    const currentQuery = searchParams.toString();
+
+    if (nextQuery === currentQuery) return;
+
+    router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, {
+      scroll: false,
+    });
+  }, [
+    debouncedSearch,
+    activeLang,
+    activeTag,
+    page,
+    pathname,
+    router,
+    searchParams,
+  ]);
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 space-y-8">
@@ -49,7 +100,7 @@ export default function SnippetsPage() {
       </div>
       <div className="space-y-3">
         <div className="relative max-w-sm">
-          <Search className="absolute left-3 top-1/2 -tranzinc-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Cari snippet..."
             value={search}

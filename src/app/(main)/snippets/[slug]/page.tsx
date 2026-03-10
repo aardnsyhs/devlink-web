@@ -1,13 +1,10 @@
-"use client";
-
-import { useParams } from "next/navigation";
-import { useSnippet } from "@/hooks/useSnippets";
 import { TagBadge } from "@/components/shared/TagBadge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { Eye, ArrowLeft, Copy, Check } from "lucide-react";
+import { Eye, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { Snippet } from "@/types/snippet";
+import { highlightCodeWithShiki } from "@/lib/shiki";
+import { CopyCodeButton } from "@/components/snippet/CopyCodeButton";
 
 const languageColors: Record<string, string> = {
   php: "text-indigo-400",
@@ -19,27 +16,28 @@ const languageColors: Record<string, string> = {
   sql: "text-orange-400",
 };
 
-export default function SnippetDetailPage() {
-  const { slug } = useParams<{ slug: string }>();
-  const { data: snippet, isLoading } = useSnippet(slug);
-  const [copied, setCopied] = useState(false);
+async function getSnippetBySlug(slug: string): Promise<Snippet | null> {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (!apiUrl) return null;
 
-  const handleCopy = () => {
-    if (!snippet) return;
-    navigator.clipboard.writeText(snippet.code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  const response = await fetch(`${apiUrl}/snippets/${slug}`, {
+    headers: { Accept: "application/json" },
+    cache: "no-store",
+  });
 
-  if (isLoading) {
-    return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 space-y-6">
-        <Skeleton className="h-8 w-24" />
-        <Skeleton className="h-10 w-3/4" />
-        <Skeleton className="h-64 w-full rounded-xl" />
-      </div>
-    );
-  }
+  if (!response.ok) return null;
+
+  const json = (await response.json()) as { data?: Snippet };
+  return json.data ?? null;
+}
+
+export default async function SnippetDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const snippet = await getSnippetBySlug(slug);
 
   if (!snippet) {
     return (
@@ -51,6 +49,11 @@ export default function SnippetDetailPage() {
       </div>
     );
   }
+
+  const highlightedCode = await highlightCodeWithShiki(
+    snippet.code,
+    snippet.language,
+  );
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 space-y-6">
@@ -90,30 +93,12 @@ export default function SnippetDetailPage() {
           <span className="text-xs font-mono text-zinc-400">
             {snippet.language}
           </span>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-7 gap-1.5 text-zinc-400 hover:text-white"
-            onClick={handleCopy}
-          >
-            {copied ? (
-              <>
-                <Check className="h-3.5 w-3.5 text-green-400" />
-                <span className="text-xs text-green-400">Copied!</span>
-              </>
-            ) : (
-              <>
-                <Copy className="h-3.5 w-3.5" />
-                <span className="text-xs">Copy</span>
-              </>
-            )}
-          </Button>
+          <CopyCodeButton code={snippet.code} />
         </div>
-        <div className="bg-zinc-950 overflow-x-auto">
-          <pre className="p-5 text-sm font-mono text-zinc-200 leading-relaxed">
-            <code>{snippet.code}</code>
-          </pre>
-        </div>
+        <div
+          className="overflow-x-auto [&_pre]:m-0! [&_pre]:bg-zinc-950! [&_pre]:p-5! [&_pre]:text-sm [&_pre]:leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: highlightedCode }}
+        />
       </div>
     </div>
   );
