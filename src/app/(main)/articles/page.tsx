@@ -6,10 +6,11 @@ import { useArticles } from "@/hooks/useArticles";
 import { useAllTags } from "@/hooks/useTags";
 import { ArticleCard } from "@/components/article/ArticleCard";
 import { ArticleCardSkeleton } from "@/components/shared/ContentSkeletons";
+import { EmptyStateIllustration } from "@/components/shared/EmptyStateIllustration";
 import { Pagination } from "@/components/shared/Pagination";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, FileText } from "lucide-react";
+import { Search } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 
 export default function ArticlesPage() {
@@ -114,7 +115,7 @@ export default function ArticlesPage() {
         </div>
       ) : data?.data?.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
-          <FileText className="h-10 w-10 text-zinc-300 mb-3" />
+          <EmptyStateIllustration variant="articles" className="mb-3" />
           <p className="font-medium">Tidak ada artikel ditemukan</p>
           <p className="text-sm text-muted-foreground mt-1">
             Coba kata kunci lain

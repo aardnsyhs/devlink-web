@@ -3,6 +3,7 @@
 import { useAuthStore } from "@/store/authStore";
 import { useArticles } from "@/hooks/useArticles";
 import { useSnippets } from "@/hooks/useSnippets";
+import { EmptyStateIllustration } from "@/components/shared/EmptyStateIllustration";
 import { StatCard } from "@/components/shared/StatCard";
 import {
   DashboardListItemSkeleton,
@@ -98,9 +99,13 @@ export default function DashboardPage() {
               ))}
             </div>
           ) : articles?.data?.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-6">
-              Belum ada artikel
-            </p>
+            <div className="py-6 flex flex-col items-center text-center">
+              <EmptyStateIllustration
+                variant="articles"
+                className="h-20 w-20 mb-2"
+              />
+              <p className="text-sm text-muted-foreground">Belum ada artikel</p>
+            </div>
           ) : (
             <div className="space-y-3">
               {articles?.data?.slice(0, 5).map((article) => (
@@ -151,9 +156,13 @@ export default function DashboardPage() {
               ))}
             </div>
           ) : snippets?.data?.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-6">
-              Belum ada snippet
-            </p>
+            <div className="py-6 flex flex-col items-center text-center">
+              <EmptyStateIllustration
+                variant="snippets"
+                className="h-20 w-20 mb-2"
+              />
+              <p className="text-sm text-muted-foreground">Belum ada snippet</p>
+            </div>
           ) : (
             <div className="space-y-3">
               {snippets?.data?.slice(0, 5).map((snippet) => (

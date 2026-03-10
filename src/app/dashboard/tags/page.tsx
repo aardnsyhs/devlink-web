@@ -8,6 +8,7 @@ import {
   useDeleteTag,
 } from "@/hooks/useTags";
 import { TagCardSkeleton } from "@/components/shared/ContentSkeletons";
+import { EmptyStateIllustration } from "@/components/shared/EmptyStateIllustration";
 import { TagFormDialog } from "@/components/tag/TagFormDialog";
 import { DeleteDialog } from "@/components/shared/DeleteDialog";
 import { TagSchema } from "@/lib/validations/tag";
@@ -106,7 +107,7 @@ export default function DashboardTagsPage() {
         </div>
       ) : data?.data?.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
-          <Tags className="h-10 w-10 text-zinc-300 mb-3" />
+          <EmptyStateIllustration variant="tags" className="mb-3" />
           <p className="font-medium text-zinc-600 dark:text-zinc-400">
             {debouncedSearch
               ? `Tidak ada tag "${debouncedSearch}"`

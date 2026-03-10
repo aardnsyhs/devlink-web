@@ -6,10 +6,11 @@ import { useSnippets } from "@/hooks/useSnippets";
 import { useAllTags } from "@/hooks/useTags";
 import { SnippetCard } from "@/components/snippet/SnippetCard";
 import { SnippetCardSkeleton } from "@/components/shared/ContentSkeletons";
+import { EmptyStateIllustration } from "@/components/shared/EmptyStateIllustration";
 import { Pagination } from "@/components/shared/Pagination";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, Code2 } from "lucide-react";
+import { Search } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 
 const LANGUAGES = [
@@ -158,7 +159,7 @@ export default function SnippetsPage() {
         </div>
       ) : data?.data?.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
-          <Code2 className="h-10 w-10 text-zinc-300 mb-3" />
+          <EmptyStateIllustration variant="snippets" className="mb-3" />
           <p className="font-medium">Tidak ada snippet ditemukan</p>
         </div>
       ) : (

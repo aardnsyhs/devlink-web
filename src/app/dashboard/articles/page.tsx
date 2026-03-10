@@ -10,6 +10,7 @@ import {
 import { ArticleForm } from "@/components/article/ArticleForm";
 import { DashboardTableRowSkeleton } from "@/components/shared/ContentSkeletons";
 import { DeleteDialog } from "@/components/shared/DeleteDialog";
+import { EmptyStateIllustration } from "@/components/shared/EmptyStateIllustration";
 import { ArticleSchema } from "@/lib/validations/article";
 import { Article } from "@/types/article";
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Plus, Pencil, Eye, FileText } from "lucide-react";
+import { Plus, Pencil, Eye } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { id } from "date-fns/locale";
 
@@ -123,7 +124,7 @@ export default function DashboardArticlesPage() {
           </div>
         ) : data?.data?.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
-            <FileText className="h-10 w-10 text-zinc-300 mb-3" />
+            <EmptyStateIllustration variant="articles" className="mb-3" />
             <p className="font-medium text-zinc-600 dark:text-zinc-400">
               Belum ada artikel
             </p>
