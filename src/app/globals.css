@@ -136,3 +136,31 @@
   pointer-events: none;
   height: 0;
 }
+
+.snippet-code-block .line {
+  display: block;
+  position: relative;
+  padding-left: 3.25rem;
+}
+
+.snippet-code-block .line::before {
+  content: attr(data-line);
+  position: absolute;
+  left: 0.75rem;
+  width: 1.75rem;
+  text-align: right;
+  color: rgb(113 113 122);
+  user-select: none;
+}
+
+.snippet-code-block .line.is-highlighted {
+  background: rgb(161 161 170 / 0.14);
+}
+
+.dark .snippet-code-block .line::before {
+  color: rgb(82 82 91);
+}
+
+.dark .snippet-code-block .line.is-highlighted {
+  background: rgb(63 63 70 / 0.3);
+}

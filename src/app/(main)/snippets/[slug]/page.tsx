@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Eye, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Snippet } from "@/types/snippet";
-import { highlightCodeWithShiki } from "@/lib/shiki";
-import { CopyCodeButton } from "@/components/snippet/CopyCodeButton";
+import { highlightCodeWithShikiAutoTheme } from "@/lib/shiki";
+import { SnippetCodeViewer } from "@/components/snippet/SnippetCodeViewer";
 
 const languageColors: Record<string, string> = {
   php: "text-indigo-400",
@@ -33,10 +33,13 @@ async function getSnippetBySlug(slug: string): Promise<Snippet | null> {
 
 export default async function SnippetDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ hl?: string }>;
 }) {
   const { slug } = await params;
+  const { hl } = await searchParams;
   const snippet = await getSnippetBySlug(slug);
 
   if (!snippet) {
@@ -50,9 +53,10 @@ export default async function SnippetDetailPage({
     );
   }
 
-  const highlightedCode = await highlightCodeWithShiki(
+  const { lightHtml, darkHtml } = await highlightCodeWithShikiAutoTheme(
     snippet.code,
     snippet.language,
+    hl,
   );
 
   return (
@@ -88,18 +92,12 @@ export default async function SnippetDetailPage({
           </span>
         </div>
       </div>
-      <div className="relative rounded-xl overflow-hidden border border-zinc-800">
-        <div className="flex items-center justify-between px-4 py-2.5 bg-zinc-800 border-b border-zinc-700">
-          <span className="text-xs font-mono text-zinc-400">
-            {snippet.language}
-          </span>
-          <CopyCodeButton code={snippet.code} />
-        </div>
-        <div
-          className="overflow-x-auto [&_pre]:m-0! [&_pre]:bg-zinc-950! [&_pre]:p-5! [&_pre]:text-sm [&_pre]:leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: highlightedCode }}
-        />
-      </div>
+      <SnippetCodeViewer
+        language={snippet.language}
+        code={snippet.code}
+        lightHtml={lightHtml}
+        darkHtml={darkHtml}
+      />
     </div>
   );
 }
