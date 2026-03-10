@@ -1,5 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { articleService } from "@/services/article.service";
+import { AxiosError } from "axios";
+import { toast } from "sonner";
+
+function getErrorMessage(error: AxiosError<{ message?: string }>) {
+  return error.response?.data?.message ?? "Terjadi kesalahan, coba lagi.";
+}
 
 export const articleKeys = {
   all: ["articles"] as const,
@@ -28,8 +34,13 @@ export function useCreateArticle() {
   return useMutation({
     mutationFn: (payload: Record<string, unknown>) =>
       articleService.create(payload),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: articleKeys.all }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: articleKeys.all });
+      toast.success("Artikel berhasil dibuat");
+    },
+    onError: (error: AxiosError<{ message?: string }>) => {
+      toast.error(getErrorMessage(error));
+    },
   });
 }
 
@@ -43,8 +54,13 @@ export function useUpdateArticle() {
       slug: string;
       payload: Record<string, unknown>;
     }) => articleService.update(slug, payload),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: articleKeys.all }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: articleKeys.all });
+      toast.success("Artikel berhasil diperbarui");
+    },
+    onError: (error: AxiosError<{ message?: string }>) => {
+      toast.error(getErrorMessage(error));
+    },
   });
 }
 
@@ -52,7 +68,12 @@ export function useDeleteArticle() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (slug: string) => articleService.delete(slug),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: articleKeys.all }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: articleKeys.all });
+      toast.success("Artikel berhasil dihapus");
+    },
+    onError: (error: AxiosError<{ message?: string }>) => {
+      toast.error(getErrorMessage(error));
+    },
   });
 }

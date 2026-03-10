@@ -1,5 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { snippetService } from "@/services/snippet.service";
+import { AxiosError } from "axios";
+import { toast } from "sonner";
+
+function getErrorMessage(error: AxiosError<{ message?: string }>) {
+  return error.response?.data?.message ?? "Terjadi kesalahan, coba lagi.";
+}
 
 export const snippetKeys = {
   all: ["snippets"] as const,
@@ -28,8 +34,13 @@ export function useCreateSnippet() {
   return useMutation({
     mutationFn: (payload: Record<string, unknown>) =>
       snippetService.create(payload),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: snippetKeys.all }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: snippetKeys.all });
+      toast.success("Snippet berhasil dibuat");
+    },
+    onError: (error: AxiosError<{ message?: string }>) => {
+      toast.error(getErrorMessage(error));
+    },
   });
 }
 
@@ -43,8 +54,13 @@ export function useUpdateSnippet() {
       slug: string;
       payload: Record<string, unknown>;
     }) => snippetService.update(slug, payload),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: snippetKeys.all }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: snippetKeys.all });
+      toast.success("Snippet berhasil diperbarui");
+    },
+    onError: (error: AxiosError<{ message?: string }>) => {
+      toast.error(getErrorMessage(error));
+    },
   });
 }
 
@@ -52,7 +68,12 @@ export function useDeleteSnippet() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (slug: string) => snippetService.delete(slug),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: snippetKeys.all }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: snippetKeys.all });
+      toast.success("Snippet berhasil dihapus");
+    },
+    onError: (error: AxiosError<{ message?: string }>) => {
+      toast.error(getErrorMessage(error));
+    },
   });
 }

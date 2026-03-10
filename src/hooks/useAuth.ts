@@ -4,6 +4,11 @@ import { authService } from "@/services/auth.service";
 import { useAuthStore } from "@/store/authStore";
 import { LoginSchema, RegisterSchema } from "@/lib/validations/auth";
 import { AxiosError } from "axios";
+import { toast } from "sonner";
+
+function getErrorMessage(error: AxiosError<{ message?: string }>) {
+  return error.response?.data?.message ?? "Terjadi kesalahan, coba lagi.";
+}
 
 export function useLogin() {
   const { setAuth } = useAuthStore();
@@ -13,10 +18,11 @@ export function useLogin() {
     mutationFn: (payload: LoginSchema) => authService.login(payload),
     onSuccess: ({ data }) => {
       setAuth(data.data.user, data.data.token);
+      toast.success("Login berhasil");
       router.push("/dashboard");
     },
-    onError: (error: AxiosError<{ message: string }>) => {
-      console.error(error.response?.data?.message);
+    onError: (error: AxiosError<{ message?: string }>) => {
+      toast.error(getErrorMessage(error));
     },
   });
 }
@@ -29,10 +35,11 @@ export function useRegister() {
     mutationFn: (payload: RegisterSchema) => authService.register(payload),
     onSuccess: ({ data }) => {
       setAuth(data.data.user, data.data.token);
+      toast.success("Registrasi berhasil");
       router.push("/dashboard");
     },
-    onError: (error: AxiosError<{ message: string }>) => {
-      console.error(error.response?.data?.message);
+    onError: (error: AxiosError<{ message?: string }>) => {
+      toast.error(getErrorMessage(error));
     },
   });
 }
@@ -43,6 +50,12 @@ export function useLogout() {
 
   return useMutation({
     mutationFn: () => authService.logout(),
+    onSuccess: () => {
+      toast.info("Kamu sudah logout");
+    },
+    onError: () => {
+      toast.error("Gagal logout ke server, sesi lokal tetap dihapus.");
+    },
     onSettled: () => {
       logout();
       router.push("/login");
