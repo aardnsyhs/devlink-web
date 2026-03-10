@@ -19,7 +19,7 @@ const languageColors: Record<string, string> = {
 export function SnippetCard({ snippet }: { snippet: Snippet }) {
   return (
     <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:border-slate-300 dark:hover:border-slate-700 transition-colors group">
-      <div className="bg-slate-950 px-4 py-3 font-mono text-xs text-slate-300 line-clamp-4 min-h-[80px]">
+      <div className="bg-slate-950 px-4 py-3 font-mono text-xs text-slate-300 line-clamp-4 min-h-20">
         <pre className="whitespace-pre-wrap break-all">{snippet.code}</pre>
       </div>
       <div className="p-4">
