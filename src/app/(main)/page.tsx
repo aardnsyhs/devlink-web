@@ -33,13 +33,13 @@ export default function LandingPage() {
         <Badge variant="secondary" className="mb-6">
           REST API + Next.js Frontend
         </Badge>
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-white leading-tight tracking-tight">
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-zinc-900 dark:text-white leading-tight tracking-tight">
           Developer Resource Hub
-          <span className="block text-slate-500 dark:text-slate-400">
+          <span className="block text-zinc-500 dark:text-zinc-400">
             untuk Developer
           </span>
         </h1>
-        <p className="mt-6 text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+        <p className="mt-6 text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
           Platform untuk berbagi artikel dan code snippet. Dibangun dengan
           Laravel 11 & Next.js 15.
         </p>
@@ -60,12 +60,12 @@ export default function LandingPage() {
           {features.map(({ icon: Icon, title, description }) => (
             <div
               key={title}
-              className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
+              className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors"
             >
-              <div className="h-10 w-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-4">
-                <Icon className="h-5 w-5 text-slate-700 dark:text-slate-300" />
+              <div className="h-10 w-10 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center mb-4">
+                <Icon className="h-5 w-5 text-zinc-700 dark:text-zinc-300" />
               </div>
-              <h3 className="font-semibold text-slate-900 dark:text-white mb-1">
+              <h3 className="font-semibold text-zinc-900 dark:text-white mb-1">
                 {title}
               </h3>
               <p className="text-sm text-muted-foreground">{description}</p>

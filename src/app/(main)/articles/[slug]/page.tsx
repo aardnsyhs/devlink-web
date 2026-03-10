@@ -55,11 +55,11 @@ export default function ArticleDetailPage() {
           ))}
         </div>
       )}
-      <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white leading-tight mb-4">
+      <h1 className="text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-white leading-tight mb-4">
         {article.title}
       </h1>
-      <div className="flex items-center gap-4 text-sm text-muted-foreground pb-8 mb-8 border-b border-slate-200 dark:border-slate-800">
-        <span className="font-medium text-slate-700 dark:text-slate-300">
+      <div className="flex items-center gap-4 text-sm text-muted-foreground pb-8 mb-8 border-b border-zinc-200 dark:border-zinc-800">
+        <span className="font-medium text-zinc-700 dark:text-zinc-300">
           {article.author?.name}
         </span>
         <span className="flex items-center gap-1">

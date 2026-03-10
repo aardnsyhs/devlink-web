@@ -12,26 +12,26 @@ const languageColors: Record<string, string> = {
   python:
     "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
   go: "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400",
-  bash: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400",
+  bash: "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-400",
   sql: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400",
 };
 
 export function SnippetCard({ snippet }: { snippet: Snippet }) {
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:border-slate-300 dark:hover:border-slate-700 transition-colors group">
-      <div className="bg-slate-950 px-4 py-3 font-mono text-xs text-slate-300 line-clamp-4 min-h-20">
+    <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors group">
+      <div className="bg-zinc-950 px-4 py-3 font-mono text-xs text-zinc-300 line-clamp-4 min-h-20">
         <pre className="whitespace-pre-wrap break-all">{snippet.code}</pre>
       </div>
       <div className="p-4">
         <span
           className={`text-xs font-medium px-2 py-0.5 rounded-md ${
-            languageColors[snippet.language] ?? "bg-slate-100 text-slate-700"
+            languageColors[snippet.language] ?? "bg-zinc-100 text-zinc-700"
           }`}
         >
           {snippet.language}
         </span>
         <Link href={`/snippets/${snippet.slug}`}>
-          <h3 className="mt-2 font-semibold text-slate-900 dark:text-white group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors line-clamp-1">
+          <h3 className="mt-2 font-semibold text-zinc-900 dark:text-white group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors line-clamp-1">
             {snippet.title}
           </h3>
         </Link>

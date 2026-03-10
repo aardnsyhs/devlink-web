@@ -40,7 +40,7 @@ export default function SnippetsPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+        <h1 className="text-3xl font-bold text-zinc-900 dark:text-white">
           Snippets
         </h1>
         <p className="text-muted-foreground mt-2">
@@ -49,7 +49,7 @@ export default function SnippetsPage() {
       </div>
       <div className="space-y-3">
         <div className="relative max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -tranzinc-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Cari snippet..."
             value={search}
@@ -107,7 +107,7 @@ export default function SnippetsPage() {
         </div>
       ) : data?.data?.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
-          <Code2 className="h-10 w-10 text-slate-300 mb-3" />
+          <Code2 className="h-10 w-10 text-zinc-300 mb-3" />
           <p className="font-medium">Tidak ada snippet ditemukan</p>
         </div>
       ) : (

@@ -15,7 +15,7 @@ const languageColors: Record<string, string> = {
   typescript: "text-blue-400",
   python: "text-green-400",
   go: "text-cyan-400",
-  bash: "text-slate-400",
+  bash: "text-zinc-400",
   sql: "text-orange-400",
 };
 
@@ -63,7 +63,7 @@ export default function SnippetDetailPage() {
       <div>
         <div className="flex flex-wrap items-center gap-2 mb-3">
           <span
-            className={`font-mono text-sm font-semibold ${languageColors[snippet.language] ?? "text-slate-400"}`}
+            className={`font-mono text-sm font-semibold ${languageColors[snippet.language] ?? "text-zinc-400"}`}
           >
             {snippet.language}
           </span>
@@ -71,12 +71,12 @@ export default function SnippetDetailPage() {
             <TagBadge key={tag.id} tag={tag} />
           ))}
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
+        <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-white">
           {snippet.title}
         </h1>
         <p className="text-muted-foreground mt-2">{snippet.description}</p>
         <div className="flex items-center gap-4 mt-3 text-sm text-muted-foreground">
-          <span className="font-medium text-slate-700 dark:text-slate-300">
+          <span className="font-medium text-zinc-700 dark:text-zinc-300">
             {snippet.author?.name}
           </span>
           <span className="flex items-center gap-1">
@@ -85,15 +85,15 @@ export default function SnippetDetailPage() {
           </span>
         </div>
       </div>
-      <div className="relative rounded-xl overflow-hidden border border-slate-800">
-        <div className="flex items-center justify-between px-4 py-2.5 bg-slate-800 border-b border-slate-700">
-          <span className="text-xs font-mono text-slate-400">
+      <div className="relative rounded-xl overflow-hidden border border-zinc-800">
+        <div className="flex items-center justify-between px-4 py-2.5 bg-zinc-800 border-b border-zinc-700">
+          <span className="text-xs font-mono text-zinc-400">
             {snippet.language}
           </span>
           <Button
             variant="ghost"
             size="sm"
-            className="h-7 gap-1.5 text-slate-400 hover:text-white"
+            className="h-7 gap-1.5 text-zinc-400 hover:text-white"
             onClick={handleCopy}
           >
             {copied ? (
@@ -109,8 +109,8 @@ export default function SnippetDetailPage() {
             )}
           </Button>
         </div>
-        <div className="bg-slate-950 overflow-x-auto">
-          <pre className="p-5 text-sm font-mono text-slate-200 leading-relaxed">
+        <div className="bg-zinc-950 overflow-x-auto">
+          <pre className="p-5 text-sm font-mono text-zinc-200 leading-relaxed">
             <code>{snippet.code}</code>
           </pre>
         </div>

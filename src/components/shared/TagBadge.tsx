@@ -14,7 +14,7 @@ export function TagBadge({
     <Link href={`/articles?tag=${tag.slug}`}>
       <Badge
         variant="secondary"
-        className="hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer transition-colors"
+        className="hover:bg-zinc-200 dark:hover:bg-zinc-700 cursor-pointer transition-colors"
       >
         {tag.name}
       </Badge>

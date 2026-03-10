@@ -97,8 +97,8 @@ export default function DashboardArticlesPage() {
           </DialogContent>
         </Dialog>
       </div>
-      <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
-        <div className="grid grid-cols-12 px-6 py-3 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
+      <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden">
+        <div className="grid grid-cols-12 px-6 py-3 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50">
           <p className="col-span-5 text-xs font-medium text-muted-foreground uppercase">
             Artikel
           </p>
@@ -123,8 +123,8 @@ export default function DashboardArticlesPage() {
           </div>
         ) : data?.data?.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
-            <FileText className="h-10 w-10 text-slate-300 mb-3" />
-            <p className="font-medium text-slate-600 dark:text-slate-400">
+            <FileText className="h-10 w-10 text-zinc-300 mb-3" />
+            <p className="font-medium text-zinc-600 dark:text-zinc-400">
               Belum ada artikel
             </p>
             <p className="text-sm text-muted-foreground mt-1">
@@ -135,7 +135,7 @@ export default function DashboardArticlesPage() {
           data?.data?.map((article) => (
             <div
               key={article.id}
-              className="grid grid-cols-12 items-center px-6 py-4 border-b border-slate-100 dark:border-slate-800 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+              className="grid grid-cols-12 items-center px-6 py-4 border-b border-zinc-100 dark:border-zinc-800 last:border-0 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"
             >
               <div className="col-span-5 min-w-0">
                 <p className="text-sm font-medium truncate">{article.title}</p>

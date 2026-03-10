@@ -7,7 +7,7 @@ import { id } from "date-fns/locale";
 
 export function ArticleCard({ article }: { article: Article }) {
   return (
-    <article className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 hover:border-slate-300 dark:hover:border-slate-700 transition-colors group">
+    <article className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors group">
       {article.tags?.length > 0 && (
         <div className="flex flex-wrap gap-1.5 mb-3">
           {article.tags.slice(0, 3).map((tag) => (
@@ -16,7 +16,7 @@ export function ArticleCard({ article }: { article: Article }) {
         </div>
       )}
       <Link href={`/articles/${article.slug}`}>
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-white group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors line-clamp-2 mb-2">
+        <h2 className="text-lg font-semibold text-zinc-900 dark:text-white group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors line-clamp-2 mb-2">
           {article.title}
         </h2>
       </Link>
@@ -25,7 +25,7 @@ export function ArticleCard({ article }: { article: Article }) {
       </p>
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <div className="flex items-center gap-3">
-          <span className="font-medium text-slate-700 dark:text-slate-300">
+          <span className="font-medium text-zinc-700 dark:text-zinc-300">
             {article.author?.name}
           </span>
           <span className="flex items-center gap-1">

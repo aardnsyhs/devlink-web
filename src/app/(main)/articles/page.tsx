@@ -33,7 +33,7 @@ export default function ArticlesPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+        <h1 className="text-3xl font-bold text-zinc-900 dark:text-white">
           Articles
         </h1>
         <p className="text-muted-foreground mt-2">
@@ -42,7 +42,7 @@ export default function ArticlesPage() {
       </div>
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -tranzinc-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Cari artikel..."
             value={search}
@@ -59,7 +59,7 @@ export default function ArticlesPage() {
               <button key={tag.id} onClick={() => handleTagClick(tag.slug)}>
                 <Badge
                   variant={activeTag === tag.slug ? "default" : "outline"}
-                  className="cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  className="cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
                 >
                   {tag.name}
                 </Badge>
@@ -76,7 +76,7 @@ export default function ArticlesPage() {
         </div>
       ) : data?.data?.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
-          <FileText className="h-10 w-10 text-slate-300 mb-3" />
+          <FileText className="h-10 w-10 text-zinc-300 mb-3" />
           <p className="font-medium">Tidak ada artikel ditemukan</p>
           <p className="text-sm text-muted-foreground mt-1">
             Coba kata kunci lain

@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { LayoutDashboard, FileText, Code2, Tags, LogOut } from "lucide-react";
+import { ThemeToggle } from "@/components/shared/ThemeToggle";
 
 const navItems = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard, exact: true },
@@ -26,12 +27,12 @@ export default function DashboardLayout({
   const pathname = usePathname();
 
   return (
-    <div className="min-h-screen flex bg-slate-50 dark:bg-slate-950">
-      <aside className="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col">
-        <div className="p-6 border-b border-slate-200 dark:border-slate-800">
+    <div className="min-h-screen flex bg-zinc-50 dark:bg-zinc-950">
+      <aside className="w-64 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 flex flex-col">
+        <div className="p-6 border-b border-zinc-200 dark:border-zinc-800">
           <Link
             href="/"
-            className="text-xl font-bold text-slate-900 dark:text-white"
+            className="text-xl font-bold text-zinc-900 dark:text-white"
           >
             DevLink
           </Link>
@@ -49,8 +50,8 @@ export default function DashboardLayout({
                 className={cn(
                   "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
                   isActive
-                    ? "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white"
-                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white",
+                    ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white"
+                    : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white",
                 )}
               >
                 <Icon className="h-4 w-4" />
@@ -59,7 +60,7 @@ export default function DashboardLayout({
             );
           })}
         </nav>
-        <div className="p-4 border-t border-slate-200 dark:border-slate-800">
+        <div className="p-4 border-t border-zinc-200 dark:border-zinc-800">
           <div className="flex items-center gap-3 mb-3">
             <Avatar className="h-8 w-8">
               <AvatarFallback className="text-xs">
@@ -72,6 +73,7 @@ export default function DashboardLayout({
                 {user?.email}
               </p>
             </div>
+            <ThemeToggle />
           </div>
           <Button
             variant="outline"

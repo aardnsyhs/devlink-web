@@ -81,7 +81,7 @@ export default function DashboardTagsPage() {
         </Button>
       </div>
       <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Search className="absolute left-3 top-1/2 -tranzinc-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           placeholder="Cari tag..."
           value={search}
@@ -106,8 +106,8 @@ export default function DashboardTagsPage() {
         </div>
       ) : data?.data?.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
-          <Tags className="h-10 w-10 text-slate-300 mb-3" />
-          <p className="font-medium text-slate-600 dark:text-slate-400">
+          <Tags className="h-10 w-10 text-zinc-300 mb-3" />
+          <p className="font-medium text-zinc-600 dark:text-zinc-400">
             {debouncedSearch
               ? `Tidak ada tag "${debouncedSearch}"`
               : "Belum ada tag"}
@@ -121,11 +121,11 @@ export default function DashboardTagsPage() {
           {data?.data?.map((tag) => (
             <div
               key={tag.id}
-              className="group bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
+              className="group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 flex items-center justify-between hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors"
             >
               <div className="flex items-center gap-3 min-w-0">
-                <div className="h-8 w-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0">
-                  <Tags className="h-4 w-4 text-slate-500" />
+                <div className="h-8 w-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center shrink-0">
+                  <Tags className="h-4 w-4 text-zinc-500" />
                 </div>
                 <div className="min-w-0">
                   <p className="text-sm font-medium truncate">{tag.name}</p>

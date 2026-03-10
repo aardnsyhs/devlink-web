@@ -28,7 +28,7 @@ const languageColors: Record<string, string> = {
   typescript: "bg-blue-100 text-blue-700",
   python: "bg-green-100 text-green-700",
   go: "bg-cyan-100 text-cyan-700",
-  bash: "bg-slate-100 text-slate-700",
+  bash: "bg-zinc-100 text-zinc-700",
   sql: "bg-orange-100 text-orange-700",
 };
 
@@ -105,8 +105,8 @@ export default function DashboardSnippetsPage() {
           </DialogContent>
         </Dialog>
       </div>
-      <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
-        <div className="grid grid-cols-12 px-6 py-3 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
+      <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden">
+        <div className="grid grid-cols-12 px-6 py-3 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50">
           <p className="col-span-5 text-xs font-medium text-muted-foreground uppercase">
             Snippet
           </p>
@@ -131,8 +131,8 @@ export default function DashboardSnippetsPage() {
           </div>
         ) : data?.data?.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
-            <Code2 className="h-10 w-10 text-slate-300 mb-3" />
-            <p className="font-medium text-slate-600 dark:text-slate-400">
+            <Code2 className="h-10 w-10 text-zinc-300 mb-3" />
+            <p className="font-medium text-zinc-600 dark:text-zinc-400">
               Belum ada snippet
             </p>
             <p className="text-sm text-muted-foreground mt-1">
@@ -143,7 +143,7 @@ export default function DashboardSnippetsPage() {
           data?.data?.map((snippet) => (
             <div
               key={snippet.id}
-              className="grid grid-cols-12 items-center px-6 py-4 border-b border-slate-100 dark:border-slate-800 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+              className="grid grid-cols-12 items-center px-6 py-4 border-b border-zinc-100 dark:border-zinc-800 last:border-0 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"
             >
               <div className="col-span-5 min-w-0">
                 <p className="text-sm font-medium truncate">{snippet.title}</p>
@@ -155,7 +155,7 @@ export default function DashboardSnippetsPage() {
                 <span
                   className={`text-xs font-medium px-2 py-1 rounded-md ${
                     languageColors[snippet.language] ??
-                    "bg-slate-100 text-slate-700"
+                    "bg-zinc-100 text-zinc-700"
                   }`}
                 >
                   {snippet.language}

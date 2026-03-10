@@ -34,7 +34,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+        <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">
           Halo, {user?.name?.split(" ")[0]} 👋
         </h1>
         <p className="text-muted-foreground mt-1">
@@ -76,9 +76,9 @@ export default function DashboardPage() {
         )}
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6">
+        <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-slate-900 dark:text-white">
+            <h2 className="font-semibold text-zinc-900 dark:text-white">
               Recent Articles
             </h2>
             <Link
@@ -103,7 +103,7 @@ export default function DashboardPage() {
               {articles?.data?.slice(0, 5).map((article) => (
                 <div
                   key={article.id}
-                  className="flex items-start justify-between gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                  className="flex items-start justify-between gap-3 p-3 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
                 >
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">
@@ -129,9 +129,9 @@ export default function DashboardPage() {
             </div>
           )}
         </div>
-        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6">
+        <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-slate-900 dark:text-white">
+            <h2 className="font-semibold text-zinc-900 dark:text-white">
               Recent Snippets
             </h2>
             <Link
@@ -156,7 +156,7 @@ export default function DashboardPage() {
               {snippets?.data?.slice(0, 5).map((snippet) => (
                 <div
                   key={snippet.id}
-                  className="flex items-start justify-between gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                  className="flex items-start justify-between gap-3 p-3 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
                 >
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">
