@@ -15,13 +15,31 @@ interface AuthState {
   isAuthenticated: () => boolean;
 }
 
+const AUTH_COOKIE_NAME = "devlink-token";
+
+function setAuthCookie(token: string) {
+  if (typeof document === "undefined") return;
+  document.cookie = `${AUTH_COOKIE_NAME}=${encodeURIComponent(token)}; Path=/; Max-Age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+}
+
+function clearAuthCookie() {
+  if (typeof document === "undefined") return;
+  document.cookie = `${AUTH_COOKIE_NAME}=; Path=/; Max-Age=0; SameSite=Lax`;
+}
+
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
       user: null,
       token: null,
-      setAuth: (user, token) => set({ user, token }),
-      logout: () => set({ user: null, token: null }),
+      setAuth: (user, token) => {
+        setAuthCookie(token);
+        set({ user, token });
+      },
+      logout: () => {
+        clearAuthCookie();
+        set({ user: null, token: null });
+      },
       isAuthenticated: () => !!get().token,
     }),
     { name: "devlink-auth" },
