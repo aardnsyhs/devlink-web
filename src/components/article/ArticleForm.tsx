@@ -31,7 +31,8 @@ export function ArticleForm({
   onSubmit,
   isPending,
 }: ArticleFormProps) {
-  const { data: tags } = useTags();
+  const { data: tagResponse } = useTags({ per_page: 100 });
+  const tags = tagResponse?.data ?? [];
 
   const {
     register,
@@ -104,7 +105,7 @@ export function ArticleForm({
           )}
         />
       </div>
-      {tags && tags.length > 0 && (
+      {tags.length > 0 && (
         <div className="space-y-2">
           <Label>Tags</Label>
           <div className="flex flex-wrap gap-2">

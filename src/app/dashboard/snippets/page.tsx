@@ -15,12 +15,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Plus, Pencil, Eye, Code2 } from "lucide-react";
 
 const languageColors: Record<string, string> = {
@@ -36,7 +35,7 @@ const languageColors: Record<string, string> = {
 export default function DashboardSnippetsPage() {
   const [page, setPage] = useState(1);
   const [editTarget, setEditTarget] = useState<Snippet | null>(null);
-  const [sheetOpen, setSheetOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const { data, isLoading } = useSnippets({
     page,
@@ -53,26 +52,26 @@ export default function DashboardSnippetsPage() {
         { slug: editTarget.slug, payload: formData },
         {
           onSuccess: () => {
-            setSheetOpen(false);
+            setDialogOpen(false);
             setEditTarget(null);
           },
         },
       );
     } else {
       createSnippet(formData, {
-        onSuccess: () => setSheetOpen(false),
+        onSuccess: () => setDialogOpen(false),
       });
     }
   };
 
   const openCreate = () => {
     setEditTarget(null);
-    setSheetOpen(true);
+    setDialogOpen(true);
   };
 
   const openEdit = (snippet: Snippet) => {
     setEditTarget(snippet);
-    setSheetOpen(true);
+    setDialogOpen(true);
   };
 
   return (
@@ -84,27 +83,27 @@ export default function DashboardSnippetsPage() {
             Kelola semua code snippet kamu
           </p>
         </div>
-        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-          <SheetTrigger asChild>
-            <Button onClick={openCreate} className="gap-2">
-              <Plus className="h-4 w-4" />
-              Snippet Baru
-            </Button>
-          </SheetTrigger>
-          <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
-            <SheetHeader className="mb-6">
-              <SheetTitle>
+        <Button onClick={openCreate} className="gap-2">
+          <Plus className="h-4 w-4" />
+          Snippet Baru
+        </Button>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogContent className="w-[calc(100%-2rem)] max-h-[92vh] overflow-hidden p-0 sm:max-w-4xl">
+            <DialogHeader className="border-b px-6 py-4">
+              <DialogTitle>
                 {editTarget ? "Edit Snippet" : "Buat Snippet Baru"}
-              </SheetTitle>
-            </SheetHeader>
-            <SnippetForm
-              key={editTarget?.id ?? "create"}
-              defaultValues={editTarget ?? undefined}
-              onSubmit={handleSubmit}
-              isPending={creating || updating}
-            />
-          </SheetContent>
-        </Sheet>
+              </DialogTitle>
+            </DialogHeader>
+            <div className="overflow-y-auto px-6 py-5">
+              <SnippetForm
+                key={editTarget?.id ?? "create"}
+                defaultValues={editTarget ?? undefined}
+                onSubmit={handleSubmit}
+                isPending={creating || updating}
+              />
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
       <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
         <div className="grid grid-cols-12 px-6 py-3 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">

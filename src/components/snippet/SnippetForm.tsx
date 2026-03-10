@@ -47,7 +47,8 @@ export function SnippetForm({
   onSubmit,
   isPending,
 }: SnippetFormProps) {
-  const { data: tags } = useTags();
+  const { data: tagResponse } = useTags({ per_page: 100 });
+  const tags = tagResponse?.data ?? [];
 
   const {
     register,
@@ -161,7 +162,7 @@ export function SnippetForm({
           <p className="text-xs text-red-500">{errors.code.message}</p>
         )}
       </div>
-      {tags && tags.length > 0 && (
+      {tags.length > 0 && (
         <div className="space-y-2">
           <Label>Tags</Label>
           <div className="flex flex-wrap gap-2">
