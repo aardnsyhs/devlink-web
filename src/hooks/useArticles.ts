@@ -56,6 +56,17 @@ export function useArticle(slug: string) {
   });
 }
 
+export function usePrefetchArticle() {
+  const queryClient = useQueryClient();
+
+  return (slug: string) =>
+    queryClient.prefetchQuery({
+      queryKey: articleKeys.detail(slug),
+      queryFn: () => articleService.getBySlug(slug).then((r) => r.data.data),
+      staleTime: 60 * 1000,
+    });
+}
+
 export function useCreateArticle() {
   const queryClient = useQueryClient();
   return useMutation({

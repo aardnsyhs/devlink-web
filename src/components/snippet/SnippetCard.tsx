@@ -1,7 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import { Snippet } from "@/types/snippet";
 import { TagBadge } from "@/components/shared/TagBadge";
-import { Eye, Code2 } from "lucide-react";
+import { Eye } from "lucide-react";
+import { usePrefetchSnippet } from "@/hooks/useSnippets";
 
 const languageColors: Record<string, string> = {
   php: "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400",
@@ -17,6 +20,8 @@ const languageColors: Record<string, string> = {
 };
 
 export function SnippetCard({ snippet }: { snippet: Snippet }) {
+  const prefetchSnippet = usePrefetchSnippet();
+
   return (
     <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors group">
       <div className="bg-zinc-950 px-4 py-3 font-mono text-xs text-zinc-300 line-clamp-4 min-h-20">
@@ -30,7 +35,11 @@ export function SnippetCard({ snippet }: { snippet: Snippet }) {
         >
           {snippet.language}
         </span>
-        <Link href={`/snippets/${snippet.slug}`}>
+        <Link
+          href={`/snippets/${snippet.slug}`}
+          onMouseEnter={() => prefetchSnippet(snippet.slug)}
+          onFocus={() => prefetchSnippet(snippet.slug)}
+        >
           <h3 className="mt-2 font-semibold text-zinc-900 dark:text-white group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors line-clamp-1">
             {snippet.title}
           </h3>

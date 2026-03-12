@@ -6,6 +6,8 @@ import { useSnippets } from "@/hooks/useSnippets";
 import { useAllTags } from "@/hooks/useTags";
 import { SnippetList } from "@/components/snippet/SnippetList";
 import { Pagination } from "@/components/shared/Pagination";
+import { QueryErrorBanner } from "@/components/shared/QueryErrorBanner";
+import { getApiErrorMessage } from "@/lib/api-error";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Search } from "lucide-react";
@@ -55,7 +57,7 @@ export default function SnippetsPage() {
 
   const debouncedSearch = useDebounce(search, 400);
   const { data: tags } = useAllTags();
-  const { data, isLoading } = useSnippets({
+  const { data, isLoading, error, refetch } = useSnippets({
     page,
     per_page: 9,
     ...(debouncedSearch && { search: debouncedSearch }),
@@ -175,6 +177,14 @@ export default function SnippetsPage() {
           </div>
         )}
       </div>
+      {error && (
+        <QueryErrorBanner
+          message={getApiErrorMessage(error)}
+          onRetry={() => {
+            void refetch();
+          }}
+        />
+      )}
       <SnippetList
         snippets={data?.data}
         isLoading={isLoading}

@@ -12,6 +12,8 @@ import { ArticleForm } from "@/components/article/ArticleForm";
 import { DashboardTableRowSkeleton } from "@/components/shared/ContentSkeletons";
 import { DeleteDialog } from "@/components/shared/DeleteDialog";
 import { EmptyStateIllustration } from "@/components/shared/EmptyStateIllustration";
+import { QueryErrorBanner } from "@/components/shared/QueryErrorBanner";
+import { getApiErrorMessage } from "@/lib/api-error";
 import { ArticleSchema } from "@/lib/validations/article";
 import { Article } from "@/types/article";
 import { Button } from "@/components/ui/button";
@@ -32,7 +34,7 @@ export default function DashboardArticlesPage() {
   const [editTarget, setEditTarget] = useState<Article | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const { data, isLoading } = useArticles({
+  const { data, isLoading, error, refetch } = useArticles({
     page,
     per_page: 10,
     status: "all",
@@ -106,6 +108,14 @@ export default function DashboardArticlesPage() {
           </DialogContent>
         </Dialog>
       </div>
+      {error && (
+        <QueryErrorBanner
+          message={getApiErrorMessage(error)}
+          onRetry={() => {
+            void refetch();
+          }}
+        />
+      )}
       <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden">
         <div className="grid grid-cols-12 px-6 py-3 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50">
           <p className="col-span-5 text-xs font-medium text-muted-foreground uppercase">

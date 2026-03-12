@@ -6,6 +6,8 @@ import { useArticles } from "@/hooks/useArticles";
 import { useAllTags } from "@/hooks/useTags";
 import { ArticleList } from "@/components/article/ArticleList";
 import { Pagination } from "@/components/shared/Pagination";
+import { QueryErrorBanner } from "@/components/shared/QueryErrorBanner";
+import { getApiErrorMessage } from "@/lib/api-error";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Search } from "lucide-react";
@@ -38,7 +40,7 @@ export default function ArticlesPage() {
 
   const debouncedSearch = useDebounce(search, 400);
   const { data: tags } = useAllTags();
-  const { data, isLoading } = useArticles({
+  const { data, isLoading, error, refetch } = useArticles({
     page,
     per_page: 9,
     ...(debouncedSearch && { search: debouncedSearch }),
@@ -134,6 +136,14 @@ export default function ArticlesPage() {
           </div>
         )}
       </div>
+      {error && (
+        <QueryErrorBanner
+          message={getApiErrorMessage(error)}
+          onRetry={() => {
+            void refetch();
+          }}
+        />
+      )}
       <ArticleList
         articles={data?.data}
         isLoading={isLoading}

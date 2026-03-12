@@ -66,6 +66,17 @@ export function useSnippet(slug: string) {
   });
 }
 
+export function usePrefetchSnippet() {
+  const queryClient = useQueryClient();
+
+  return (slug: string) =>
+    queryClient.prefetchQuery({
+      queryKey: snippetKeys.detail(slug),
+      queryFn: () => snippetService.getBySlug(slug).then((r) => r.data.data),
+      staleTime: 60 * 1000,
+    });
+}
+
 export function useCreateSnippet() {
   const queryClient = useQueryClient();
   return useMutation({

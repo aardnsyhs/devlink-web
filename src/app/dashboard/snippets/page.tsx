@@ -12,6 +12,8 @@ import { SnippetForm } from "@/components/snippet/SnippetForm";
 import { DashboardTableRowSkeleton } from "@/components/shared/ContentSkeletons";
 import { DeleteDialog } from "@/components/shared/DeleteDialog";
 import { EmptyStateIllustration } from "@/components/shared/EmptyStateIllustration";
+import { QueryErrorBanner } from "@/components/shared/QueryErrorBanner";
+import { getApiErrorMessage } from "@/lib/api-error";
 import { SnippetSchema } from "@/lib/validations/snippet";
 import { Snippet } from "@/types/snippet";
 import { Button } from "@/components/ui/button";
@@ -40,7 +42,7 @@ export default function DashboardSnippetsPage() {
   const [editTarget, setEditTarget] = useState<Snippet | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const { data, isLoading } = useSnippets({
+  const { data, isLoading, error, refetch } = useSnippets({
     page,
     per_page: 10,
     status: "all",
@@ -114,6 +116,14 @@ export default function DashboardSnippetsPage() {
           </DialogContent>
         </Dialog>
       </div>
+      {error && (
+        <QueryErrorBanner
+          message={getApiErrorMessage(error)}
+          onRetry={() => {
+            void refetch();
+          }}
+        />
+      )}
       <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden">
         <div className="grid grid-cols-12 px-6 py-3 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50">
           <p className="col-span-5 text-xs font-medium text-muted-foreground uppercase">

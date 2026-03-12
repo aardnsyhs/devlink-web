@@ -10,6 +10,8 @@ import {
 import { TagCardSkeleton } from "@/components/shared/ContentSkeletons";
 import { EmptyStateIllustration } from "@/components/shared/EmptyStateIllustration";
 import { TagFormDialog } from "@/components/tag/TagFormDialog";
+import { QueryErrorBanner } from "@/components/shared/QueryErrorBanner";
+import { getApiErrorMessage } from "@/lib/api-error";
 import { DeleteDialog } from "@/components/shared/DeleteDialog";
 import { TagSchema } from "@/lib/validations/tag";
 import { Tag } from "@/types/tag";
@@ -26,7 +28,7 @@ export default function DashboardTagsPage() {
 
   const debouncedSearch = useDebounce(search, 400);
 
-  const { data, isLoading } = useTags({
+  const { data, isLoading, error, refetch } = useTags({
     page,
     per_page: 20,
     ...(debouncedSearch && { search: debouncedSearch }),
@@ -96,6 +98,14 @@ export default function DashboardTagsPage() {
           {isLoading ? "Memuat..." : `${data?.meta?.total ?? 0} tag total`}
         </span>
       </div>
+      {error && (
+        <QueryErrorBanner
+          message={getApiErrorMessage(error)}
+          onRetry={() => {
+            void refetch();
+          }}
+        />
+      )}
       {isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {Array.from({ length: 9 }).map((_, i) => (
