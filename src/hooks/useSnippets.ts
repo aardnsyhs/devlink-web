@@ -4,6 +4,19 @@ import { AxiosError } from "axios";
 import { toast } from "sonner";
 import { Snippet } from "@/types/snippet";
 
+type SnippetMutationPayload = Record<string, unknown> & {
+  tag_ids?: number[];
+};
+
+function toSnippetApiPayload(payload: SnippetMutationPayload) {
+  const { tag_ids, ...rest } = payload;
+
+  return {
+    ...rest,
+    tags: tag_ids ?? [],
+  };
+}
+
 type SnippetPaginated = {
   data: Snippet[];
   meta: {
@@ -61,8 +74,8 @@ export function useSnippet(slug: string) {
 export function useCreateSnippet() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (payload: Record<string, unknown>) =>
-      snippetService.create(payload),
+    mutationFn: (payload: SnippetMutationPayload) =>
+      snippetService.create(toSnippetApiPayload(payload)),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: snippetKeys.all });
       toast.success("Snippet berhasil dibuat");
@@ -82,8 +95,8 @@ export function useUpdateSnippet() {
     }: {
       id: number;
       slug?: string;
-      payload: Record<string, unknown>;
-    }) => snippetService.update(id, payload),
+      payload: SnippetMutationPayload;
+    }) => snippetService.update(id, toSnippetApiPayload(payload)),
     onMutate: async ({ id, slug, payload }) => {
       await queryClient.cancelQueries({ queryKey: snippetKeys.all });
 

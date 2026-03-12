@@ -7,6 +7,7 @@ import {
   useCreateSnippet,
   useUpdateSnippet,
 } from "@/hooks/useSnippets";
+import { snippetService } from "@/services/snippet.service";
 import { SnippetForm } from "@/components/snippet/SnippetForm";
 import { DashboardTableRowSkeleton } from "@/components/shared/ContentSkeletons";
 import { DeleteDialog } from "@/components/shared/DeleteDialog";
@@ -22,6 +23,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Plus, Pencil, Eye } from "lucide-react";
+import { toast } from "sonner";
 
 const languageColors: Record<string, string> = {
   php: "bg-indigo-100 text-indigo-700",
@@ -70,9 +72,14 @@ export default function DashboardSnippetsPage() {
     setDialogOpen(true);
   };
 
-  const openEdit = (snippet: Snippet) => {
-    setEditTarget(snippet);
-    setDialogOpen(true);
+  const openEdit = async (snippet: Snippet) => {
+    try {
+      const response = await snippetService.getBySlug(snippet.slug);
+      setEditTarget(response.data.data);
+      setDialogOpen(true);
+    } catch {
+      toast.error("Gagal memuat detail snippet");
+    }
   };
 
   return (

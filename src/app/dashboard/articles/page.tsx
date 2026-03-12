@@ -7,6 +7,7 @@ import {
   useUpdateArticle,
   useDeleteArticle,
 } from "@/hooks/useArticles";
+import { articleService } from "@/services/article.service";
 import { ArticleForm } from "@/components/article/ArticleForm";
 import { DashboardTableRowSkeleton } from "@/components/shared/ContentSkeletons";
 import { DeleteDialog } from "@/components/shared/DeleteDialog";
@@ -24,6 +25,7 @@ import {
 import { Plus, Pencil, Eye } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { id } from "date-fns/locale";
+import { toast } from "sonner";
 
 export default function DashboardArticlesPage() {
   const [page, setPage] = useState(1);
@@ -62,9 +64,14 @@ export default function DashboardArticlesPage() {
     setDialogOpen(true);
   };
 
-  const openEdit = (article: Article) => {
-    setEditTarget(article);
-    setDialogOpen(true);
+  const openEdit = async (article: Article) => {
+    try {
+      const response = await articleService.getBySlug(article.slug);
+      setEditTarget(response.data.data);
+      setDialogOpen(true);
+    } catch {
+      toast.error("Gagal memuat detail artikel");
+    }
   };
 
   return (

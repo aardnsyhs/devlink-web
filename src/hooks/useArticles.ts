@@ -4,6 +4,19 @@ import { AxiosError } from "axios";
 import { toast } from "sonner";
 import { Article, ArticlePaginated } from "@/types/article";
 
+type ArticleMutationPayload = Record<string, unknown> & {
+  tag_ids?: number[];
+};
+
+function toArticleApiPayload(payload: ArticleMutationPayload) {
+  const { tag_ids, ...rest } = payload;
+
+  return {
+    ...rest,
+    tags: tag_ids ?? [],
+  };
+}
+
 function getErrorMessage(error: unknown) {
   const axiosError = error as AxiosError<{ message?: string }>;
   return axiosError.response?.data?.message ?? "Terjadi kesalahan, coba lagi.";
@@ -51,8 +64,8 @@ export function useArticle(slug: string) {
 export function useCreateArticle() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (payload: Record<string, unknown>) =>
-      articleService.create(payload),
+    mutationFn: (payload: ArticleMutationPayload) =>
+      articleService.create(toArticleApiPayload(payload)),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: articleKeys.all });
       toast.success("Artikel berhasil dibuat");
@@ -72,8 +85,8 @@ export function useUpdateArticle() {
     }: {
       id: number;
       slug?: string;
-      payload: Record<string, unknown>;
-    }) => articleService.update(id, payload),
+      payload: ArticleMutationPayload;
+    }) => articleService.update(id, toArticleApiPayload(payload)),
     onMutate: async ({ id, slug, payload }) => {
       await queryClient.cancelQueries({ queryKey: articleKeys.all });
 
