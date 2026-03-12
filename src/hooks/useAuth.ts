@@ -1,4 +1,5 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { authService } from "@/services/auth.service";
 import { useAuthStore } from "@/store/authStore";
@@ -7,12 +8,12 @@ import {
   RegisterSchema,
   UpdateProfileSchema,
 } from "@/lib/validations/auth";
-import { AxiosError } from "axios";
 import { toast } from "sonner";
+import { getApiErrorMessage } from "@/lib/api-error";
 
-function getErrorMessage(error: AxiosError<{ message?: string }>) {
-  return error.response?.data?.message ?? "Terjadi kesalahan, coba lagi.";
-}
+export const authKeys = {
+  me: ["auth", "me"] as const,
+};
 
 export function useLogin() {
   const { setAuth } = useAuthStore();
@@ -25,8 +26,8 @@ export function useLogin() {
       toast.success("Login berhasil");
       router.push("/dashboard");
     },
-    onError: (error: AxiosError<{ message?: string }>) => {
-      toast.error(getErrorMessage(error));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error));
     },
   });
 }
@@ -42,8 +43,8 @@ export function useRegister() {
       toast.success("Registrasi berhasil");
       router.push("/dashboard");
     },
-    onError: (error: AxiosError<{ message?: string }>) => {
-      toast.error(getErrorMessage(error));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error));
     },
   });
 }
@@ -86,8 +87,25 @@ export function useUpdateProfile() {
       setUser(data.data.user);
       toast.success("Profile berhasil diperbarui");
     },
-    onError: (error: AxiosError<{ message?: string }>) => {
-      toast.error(getErrorMessage(error));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error));
     },
   });
+}
+
+export function useMe() {
+  const { token, setUser } = useAuthStore();
+  const query = useQuery({
+    queryKey: authKeys.me,
+    queryFn: () => authService.me().then((r) => r.data.data.user),
+    enabled: !!token,
+    staleTime: 60 * 1000,
+    retry: 1,
+  });
+
+  useEffect(() => {
+    if (query.data) setUser(query.data);
+  }, [query.data, setUser]);
+
+  return query;
 }

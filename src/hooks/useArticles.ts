@@ -1,8 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { articleService } from "@/services/article.service";
-import { AxiosError } from "axios";
 import { toast } from "sonner";
 import { Article, ArticlePaginated } from "@/types/article";
+import { getApiErrorMessage } from "@/lib/api-error";
 
 type ArticleMutationPayload = Record<string, unknown> & {
   tag_ids?: number[];
@@ -15,11 +15,6 @@ function toArticleApiPayload(payload: ArticleMutationPayload) {
     ...rest,
     tags: tag_ids ?? [],
   };
-}
-
-function getErrorMessage(error: unknown) {
-  const axiosError = error as AxiosError<{ message?: string }>;
-  return axiosError.response?.data?.message ?? "Terjadi kesalahan, coba lagi.";
 }
 
 export const articleKeys = {
@@ -39,8 +34,8 @@ function normalizeMetaNumber(value: unknown): number {
 export function useArticles(params?: Record<string, unknown>) {
   return useQuery({
     queryKey: articleKeys.list(params),
-    queryFn: () =>
-      articleService.getAll(params).then((r) => ({
+    queryFn: ({ signal }) =>
+      articleService.getAll(params, signal).then((r) => ({
         ...r.data,
         meta: {
           ...r.data.meta,
@@ -70,8 +65,8 @@ export function useCreateArticle() {
       await queryClient.invalidateQueries({ queryKey: articleKeys.all });
       toast.success("Artikel berhasil dibuat");
     },
-    onError: (error: AxiosError<{ message?: string }>) => {
-      toast.error(getErrorMessage(error));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error));
     },
   });
 }
@@ -130,7 +125,7 @@ export function useUpdateArticle() {
         );
       }
 
-      toast.error(getErrorMessage(error));
+      toast.error(getApiErrorMessage(error));
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: articleKeys.all });
@@ -195,7 +190,7 @@ export function useDeleteArticle() {
         );
       }
 
-      toast.error(getErrorMessage(error));
+      toast.error(getApiErrorMessage(error));
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: articleKeys.all });

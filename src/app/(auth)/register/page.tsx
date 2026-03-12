@@ -7,7 +7,7 @@ import { registerSchema, RegisterSchema } from "@/lib/validations/auth";
 import { useRegister } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { FormField } from "@/components/shared/FormField";
 import {
   Card,
   CardContent,
@@ -43,51 +43,41 @@ export default function RegisterPage() {
               Pendaftaran gagal. Coba lagi.
             </div>
           )}
-          <div className="space-y-2">
-            <Label htmlFor="name">Nama</Label>
+          <FormField id="name" label="Nama" error={errors.name?.message}>
             <Input id="name" placeholder="Nama lengkap" {...register("name")} />
-            {errors.name && (
-              <p className="text-xs text-red-500">{errors.name.message}</p>
-            )}
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+          </FormField>
+          <FormField id="email" label="Email" error={errors.email?.message}>
             <Input
               id="email"
               type="email"
               placeholder="kamu@email.com"
               {...register("email")}
             />
-            {errors.email && (
-              <p className="text-xs text-red-500">{errors.email.message}</p>
-            )}
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+          </FormField>
+          <FormField
+            id="password"
+            label="Password"
+            error={errors.password?.message}
+          >
             <Input
               id="password"
               type="password"
               placeholder="••••••••"
               {...register("password")}
             />
-            {errors.password && (
-              <p className="text-xs text-red-500">{errors.password.message}</p>
-            )}
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="password_confirmation">Konfirmasi Password</Label>
+          </FormField>
+          <FormField
+            id="password_confirmation"
+            label="Konfirmasi Password"
+            error={errors.password_confirmation?.message}
+          >
             <Input
               id="password_confirmation"
               type="password"
               placeholder="••••••••"
               {...register("password_confirmation")}
             />
-            {errors.password_confirmation && (
-              <p className="text-xs text-red-500">
-                {errors.password_confirmation.message}
-              </p>
-            )}
-          </div>
+          </FormField>
         </CardContent>
         <CardFooter className="flex flex-col gap-3">
           <Button type="submit" className="w-full" disabled={isPending}>

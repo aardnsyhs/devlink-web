@@ -7,7 +7,7 @@ import { loginSchema, LoginSchema } from "@/lib/validations/auth";
 import { useLogin } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { FormField } from "@/components/shared/FormField";
 import {
   Card,
   CardContent,
@@ -43,30 +43,26 @@ export default function LoginPage() {
               Email atau password salah
             </div>
           )}
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+          <FormField id="email" label="Email" error={errors.email?.message}>
             <Input
               id="email"
               type="email"
               placeholder="kamu@email.com"
               {...register("email")}
             />
-            {errors.email && (
-              <p className="text-xs text-red-500">{errors.email.message}</p>
-            )}
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+          </FormField>
+          <FormField
+            id="password"
+            label="Password"
+            error={errors.password?.message}
+          >
             <Input
               id="password"
               type="password"
               placeholder="••••••••"
               {...register("password")}
             />
-            {errors.password && (
-              <p className="text-xs text-red-500">{errors.password.message}</p>
-            )}
-          </div>
+          </FormField>
         </CardContent>
         <CardFooter className="flex flex-col gap-3">
           <Button type="submit" className="w-full" disabled={isPending}>

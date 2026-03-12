@@ -12,8 +12,8 @@ interface TagPaginated {
 }
 
 export const tagService = {
-  getAll: (params?: Record<string, unknown>) =>
-    api.get<TagPaginated>("/tags", { params }),
+  getAll: (params?: Record<string, unknown>, signal?: AbortSignal) =>
+    api.get<TagPaginated>("/tags", { params, signal }),
 
   create: (payload: { name: string }) =>
     api.post<{ data: Tag }>("/tags", payload),

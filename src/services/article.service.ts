@@ -2,8 +2,8 @@ import api from "@/lib/api";
 import { ArticlePaginated, Article } from "@/types/article";
 
 export const articleService = {
-  getAll: (params?: Record<string, unknown>) =>
-    api.get<ArticlePaginated>("/articles", { params }),
+  getAll: (params?: Record<string, unknown>, signal?: AbortSignal) =>
+    api.get<ArticlePaginated>("/articles", { params, signal }),
 
   getBySlug: (slug: string) => api.get<{ data: Article }>(`/articles/${slug}`),
 

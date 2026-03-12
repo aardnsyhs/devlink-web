@@ -2,13 +2,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { tagService } from "@/services/tag.service";
 import api from "@/lib/api";
 import { Tag } from "@/types/tag";
-import { AxiosError } from "axios";
 import { toast } from "sonner";
-
-function getErrorMessage(error: unknown) {
-  const axiosError = error as AxiosError<{ message?: string }>;
-  return axiosError.response?.data?.message ?? "Terjadi kesalahan, coba lagi.";
-}
+import { getApiErrorMessage } from "@/lib/api-error";
 
 type TagPaginated = {
   data: Tag[];
@@ -36,8 +31,8 @@ function normalizeMetaNumber(value: unknown): number {
 export function useTags(params?: Record<string, unknown>) {
   return useQuery({
     queryKey: tagKeys.list(params),
-    queryFn: () =>
-      tagService.getAll(params).then((r) => ({
+    queryFn: ({ signal }) =>
+      tagService.getAll(params, signal).then((r) => ({
         ...r.data,
         meta: {
           ...r.data.meta,
@@ -54,9 +49,9 @@ export function useTags(params?: Record<string, unknown>) {
 export function useAllTags() {
   return useQuery({
     queryKey: tagKeys.all,
-    queryFn: () =>
+    queryFn: ({ signal }) =>
       api
-        .get<{ data: Tag[] }>("/tags", { params: { per_page: 100 } })
+        .get<{ data: Tag[] }>("/tags", { params: { per_page: 100 }, signal })
         .then((r) => r.data.data),
     staleTime: 5 * 60 * 1000,
   });
@@ -70,8 +65,8 @@ export function useCreateTag() {
       await queryClient.invalidateQueries({ queryKey: tagKeys.all });
       toast.success("Tag berhasil dibuat");
     },
-    onError: (error: AxiosError<{ message?: string }>) => {
-      toast.error(getErrorMessage(error));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error));
     },
   });
 }
@@ -121,7 +116,7 @@ export function useUpdateTag() {
       context?.previousLists?.forEach(([key, value]) => {
         queryClient.setQueryData(key, value);
       });
-      toast.error(getErrorMessage(error));
+      toast.error(getApiErrorMessage(error));
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: tagKeys.all });
@@ -165,7 +160,7 @@ export function useDeleteTag() {
       context?.previousLists?.forEach(([key, value]) => {
         queryClient.setQueryData(key, value);
       });
-      toast.error(getErrorMessage(error));
+      toast.error(getApiErrorMessage(error));
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: tagKeys.all });

@@ -11,7 +11,7 @@ import { useAuthStore } from "@/store/authStore";
 import { useUpdateProfile } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { FormField } from "@/components/shared/FormField";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function DashboardProfilePage() {
@@ -63,59 +63,42 @@ export default function DashboardProfilePage() {
           Kelola informasi akun kamu
         </p>
       </div>
-
       <Card className="max-w-2xl">
         <CardHeader>
           <CardTitle>Informasi Akun</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Nama</Label>
+            <FormField id="name" label="Nama" error={errors.name?.message}>
               <Input id="name" {...register("name")} />
-              {errors.name && (
-                <p className="text-xs text-red-500">{errors.name.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+            </FormField>
+            <FormField id="email" label="Email" error={errors.email?.message}>
               <Input id="email" type="email" {...register("email")} />
-              {errors.email && (
-                <p className="text-xs text-red-500">{errors.email.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Password Baru (opsional)</Label>
+            </FormField>
+            <FormField
+              id="password"
+              label="Password Baru (opsional)"
+              error={errors.password?.message}
+            >
               <Input
                 id="password"
                 type="password"
                 placeholder="Kosongkan jika tidak ingin mengubah"
                 {...register("password")}
               />
-              {errors.password && (
-                <p className="text-xs text-red-500">{errors.password.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password_confirmation">
-                Konfirmasi Password Baru
-              </Label>
+            </FormField>
+            <FormField
+              id="password_confirmation"
+              label="Konfirmasi Password Baru"
+              error={errors.password_confirmation?.message}
+            >
               <Input
                 id="password_confirmation"
                 type="password"
                 placeholder="Ulangi password baru"
                 {...register("password_confirmation")}
               />
-              {errors.password_confirmation && (
-                <p className="text-xs text-red-500">
-                  {errors.password_confirmation.message}
-                </p>
-              )}
-            </div>
-
+            </FormField>
             <Button type="submit" disabled={isPending}>
               {isPending ? "Menyimpan..." : "Simpan Perubahan"}
             </Button>

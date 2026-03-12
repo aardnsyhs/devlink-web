@@ -1,8 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { snippetService } from "@/services/snippet.service";
-import { AxiosError } from "axios";
 import { toast } from "sonner";
 import { Snippet } from "@/types/snippet";
+import { getApiErrorMessage } from "@/lib/api-error";
 
 type SnippetMutationPayload = Record<string, unknown> & {
   tag_ids?: number[];
@@ -27,11 +27,6 @@ type SnippetPaginated = {
   };
 };
 
-function getErrorMessage(error: unknown) {
-  const axiosError = error as AxiosError<{ message?: string }>;
-  return axiosError.response?.data?.message ?? "Terjadi kesalahan, coba lagi.";
-}
-
 export const snippetKeys = {
   all: ["snippets"] as const,
   list: (params?: Record<string, unknown>) =>
@@ -49,8 +44,8 @@ function normalizeMetaNumber(value: unknown): number {
 export function useSnippets(params?: Record<string, unknown>) {
   return useQuery({
     queryKey: snippetKeys.list(params),
-    queryFn: () =>
-      snippetService.getAll(params).then((r) => ({
+    queryFn: ({ signal }) =>
+      snippetService.getAll(params, signal).then((r) => ({
         ...r.data,
         meta: {
           ...r.data.meta,
@@ -80,8 +75,8 @@ export function useCreateSnippet() {
       await queryClient.invalidateQueries({ queryKey: snippetKeys.all });
       toast.success("Snippet berhasil dibuat");
     },
-    onError: (error: AxiosError<{ message?: string }>) => {
-      toast.error(getErrorMessage(error));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error));
     },
   });
 }
@@ -140,7 +135,7 @@ export function useUpdateSnippet() {
         );
       }
 
-      toast.error(getErrorMessage(error));
+      toast.error(getApiErrorMessage(error));
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: snippetKeys.all });
@@ -205,7 +200,7 @@ export function useDeleteSnippet() {
         );
       }
 
-      toast.error(getErrorMessage(error));
+      toast.error(getApiErrorMessage(error));
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: snippetKeys.all });

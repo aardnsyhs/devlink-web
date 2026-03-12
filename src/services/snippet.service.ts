@@ -12,8 +12,8 @@ interface SnippetPaginated {
 }
 
 export const snippetService = {
-  getAll: (params?: Record<string, unknown>) =>
-    api.get<SnippetPaginated>("/snippets", { params }),
+  getAll: (params?: Record<string, unknown>, signal?: AbortSignal) =>
+    api.get<SnippetPaginated>("/snippets", { params, signal }),
 
   getBySlug: (slug: string) => api.get<{ data: Snippet }>(`/snippets/${slug}`),
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuthStore } from "@/store/authStore";
-import { useLogout } from "@/hooks/useAuth";
+import { useLogout, useMe } from "@/hooks/useAuth";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -25,6 +25,7 @@ export default function DashboardLayout({
   const { user } = useAuthStore();
   const { mutate: logout, isPending } = useLogout();
   const pathname = usePathname();
+  useMe();
 
   return (
     <div className="min-h-screen flex bg-zinc-50 dark:bg-zinc-950">
