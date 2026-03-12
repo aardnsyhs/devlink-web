@@ -44,6 +44,7 @@ export default function DashboardSnippetsPage() {
     page,
     per_page: 10,
     status: "all",
+    mine: 1,
   });
   const { mutate: createSnippet, isPending: creating } = useCreateSnippet();
   const { mutate: updateSnippet, isPending: updating } = useUpdateSnippet();

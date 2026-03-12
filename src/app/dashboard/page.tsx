@@ -20,10 +20,12 @@ export default function DashboardPage() {
   const { data: articles, isLoading: loadingArticles } = useArticles({
     status: "all",
     per_page: 5,
+    mine: 1,
   });
   const { data: snippets, isLoading: loadingSnippets } = useSnippets({
     status: "all",
     per_page: 5,
+    mine: 1,
   });
 
   const totalViews =

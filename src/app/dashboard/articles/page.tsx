@@ -36,6 +36,7 @@ export default function DashboardArticlesPage() {
     page,
     per_page: 10,
     status: "all",
+    mine: 1,
   });
   const { mutate: createArticle, isPending: creating } = useCreateArticle();
   const { mutate: updateArticle, isPending: updating } = useUpdateArticle();
