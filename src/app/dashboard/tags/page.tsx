@@ -14,11 +14,8 @@ import { DeleteDialog } from "@/components/shared/DeleteDialog";
 import { TagSchema } from "@/lib/validations/tag";
 import { Tag } from "@/types/tag";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Plus, Pencil, Tags, Search } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { id } from "date-fns/locale";
 import { useDebounce } from "@/hooks/useDebounce";
 
 export default function DashboardTagsPage() {
@@ -42,7 +39,7 @@ export default function DashboardTagsPage() {
   const handleSubmit = (formData: TagSchema) => {
     if (editTarget) {
       updateTag(
-        { slug: editTarget.slug, payload: formData },
+        { id: editTarget.id, payload: formData },
         {
           onSuccess: () => {
             setDialogOpen(false);
@@ -146,7 +143,7 @@ export default function DashboardTagsPage() {
                 </Button>
                 <DeleteDialog
                   title={tag.name}
-                  onConfirm={() => deleteTag(tag.slug)}
+                  onConfirm={() => deleteTag(tag.id)}
                   isPending={deleting}
                 />
               </div>

@@ -50,21 +50,22 @@ export function useUpdateArticle() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      slug,
+      id,
       payload,
     }: {
-      slug: string;
+      id: number;
+      slug?: string;
       payload: Record<string, unknown>;
-    }) => articleService.update(slug, payload),
-    onMutate: async ({ slug, payload }) => {
+    }) => articleService.update(id, payload),
+    onMutate: async ({ id, slug, payload }) => {
       await queryClient.cancelQueries({ queryKey: articleKeys.all });
 
       const previousLists = queryClient.getQueriesData<ArticlePaginated>({
         queryKey: articleKeys.all,
       });
-      const previousDetail = queryClient.getQueryData<Article>(
-        articleKeys.detail(slug),
-      );
+      const previousDetail = slug
+        ? queryClient.getQueryData<Article>(articleKeys.detail(slug))
+        : undefined;
 
       queryClient.setQueriesData<ArticlePaginated>(
         { queryKey: articleKeys.all },
@@ -73,15 +74,17 @@ export function useUpdateArticle() {
           return {
             ...old,
             data: old.data.map((article) =>
-              article.slug === slug ? { ...article, ...payload } : article,
+              article.id === id ? { ...article, ...payload } : article,
             ),
           };
         },
       );
 
-      queryClient.setQueryData<Article>(articleKeys.detail(slug), (old) =>
-        old ? { ...old, ...payload } : old,
-      );
+      if (slug) {
+        queryClient.setQueryData<Article>(articleKeys.detail(slug), (old) =>
+          old ? { ...old, ...payload } : old,
+        );
+      }
 
       return { previousLists, previousDetail, slug };
     },
@@ -105,9 +108,11 @@ export function useUpdateArticle() {
     },
     onSettled: async (_data, _error, variables) => {
       await queryClient.invalidateQueries({ queryKey: articleKeys.all });
-      await queryClient.invalidateQueries({
-        queryKey: articleKeys.detail(variables.slug),
-      });
+      if (variables.slug) {
+        await queryClient.invalidateQueries({
+          queryKey: articleKeys.detail(variables.slug),
+        });
+      }
     },
   });
 }
@@ -115,16 +120,17 @@ export function useUpdateArticle() {
 export function useDeleteArticle() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (slug: string) => articleService.delete(slug),
-    onMutate: async (slug) => {
+    mutationFn: ({ id }: { id: number; slug?: string }) =>
+      articleService.delete(id),
+    onMutate: async ({ id, slug }) => {
       await queryClient.cancelQueries({ queryKey: articleKeys.all });
 
       const previousLists = queryClient.getQueriesData<ArticlePaginated>({
         queryKey: articleKeys.all,
       });
-      const previousDetail = queryClient.getQueryData<Article>(
-        articleKeys.detail(slug),
-      );
+      const previousDetail = slug
+        ? queryClient.getQueryData<Article>(articleKeys.detail(slug))
+        : undefined;
 
       queryClient.setQueriesData<ArticlePaginated>(
         { queryKey: articleKeys.all },
@@ -132,7 +138,7 @@ export function useDeleteArticle() {
           if (!old?.data) return old;
           return {
             ...old,
-            data: old.data.filter((article) => article.slug !== slug),
+            data: old.data.filter((article) => article.id !== id),
             meta: {
               ...old.meta,
               total: Math.max(0, old.meta.total - 1),
@@ -141,7 +147,9 @@ export function useDeleteArticle() {
         },
       );
 
-      queryClient.removeQueries({ queryKey: articleKeys.detail(slug) });
+      if (slug) {
+        queryClient.removeQueries({ queryKey: articleKeys.detail(slug) });
+      }
 
       return { previousLists, previousDetail, slug };
     },
@@ -163,11 +171,13 @@ export function useDeleteArticle() {
       await queryClient.invalidateQueries({ queryKey: articleKeys.all });
       toast.success("Artikel berhasil dihapus");
     },
-    onSettled: async (_data, _error, slug) => {
+    onSettled: async (_data, _error, variables) => {
       await queryClient.invalidateQueries({ queryKey: articleKeys.all });
-      await queryClient.invalidateQueries({
-        queryKey: articleKeys.detail(slug),
-      });
+      if (variables.slug) {
+        await queryClient.invalidateQueries({
+          queryKey: articleKeys.detail(variables.slug),
+        });
+      }
     },
   });
 }

@@ -50,7 +50,7 @@ export default function DashboardSnippetsPage() {
   const handleSubmit = (formData: SnippetSchema) => {
     if (editTarget) {
       updateSnippet(
-        { slug: editTarget.slug, payload: formData },
+        { id: editTarget.id, slug: editTarget.slug, payload: formData },
         {
           onSuccess: () => {
             setDialogOpen(false);
@@ -187,7 +187,9 @@ export default function DashboardSnippetsPage() {
                 </Button>
                 <DeleteDialog
                   title={snippet.title}
-                  onConfirm={() => deleteSnippet(snippet.slug)}
+                  onConfirm={() =>
+                    deleteSnippet({ id: snippet.id, slug: snippet.slug })
+                  }
                   isPending={deleting}
                 />
               </div>

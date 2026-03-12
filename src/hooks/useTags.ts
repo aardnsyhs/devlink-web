@@ -63,13 +63,13 @@ export function useUpdateTag() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      slug,
+      id,
       payload,
     }: {
-      slug: string;
+      id: number;
       payload: { name: string };
-    }) => tagService.update(slug, payload),
-    onMutate: async ({ slug, payload }) => {
+    }) => tagService.update(id, payload),
+    onMutate: async ({ id, payload }) => {
       await queryClient.cancelQueries({ queryKey: tagKeys.all });
 
       const previousLists = queryClient.getQueriesData<TagPaginated>({
@@ -83,7 +83,7 @@ export function useUpdateTag() {
           return {
             ...old,
             data: old.data.map((tag) =>
-              tag.slug === slug
+              tag.id === id
                 ? {
                     ...tag,
                     name: payload.name,
@@ -119,8 +119,8 @@ export function useUpdateTag() {
 export function useDeleteTag() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (slug: string) => tagService.delete(slug),
-    onMutate: async (slug) => {
+    mutationFn: (id: number) => tagService.delete(id),
+    onMutate: async (id) => {
       await queryClient.cancelQueries({ queryKey: tagKeys.all });
 
       const previousLists = queryClient.getQueriesData<TagPaginated>({
@@ -133,7 +133,7 @@ export function useDeleteTag() {
           if (!old?.data) return old;
           return {
             ...old,
-            data: old.data.filter((tag) => tag.slug !== slug),
+            data: old.data.filter((tag) => tag.id !== id),
             meta: {
               ...old.meta,
               total: Math.max(0, old.meta.total - 1),

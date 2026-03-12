@@ -60,21 +60,22 @@ export function useUpdateSnippet() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      slug,
+      id,
       payload,
     }: {
-      slug: string;
+      id: number;
+      slug?: string;
       payload: Record<string, unknown>;
-    }) => snippetService.update(slug, payload),
-    onMutate: async ({ slug, payload }) => {
+    }) => snippetService.update(id, payload),
+    onMutate: async ({ id, slug, payload }) => {
       await queryClient.cancelQueries({ queryKey: snippetKeys.all });
 
       const previousLists = queryClient.getQueriesData<SnippetPaginated>({
         queryKey: snippetKeys.all,
       });
-      const previousDetail = queryClient.getQueryData<Snippet>(
-        snippetKeys.detail(slug),
-      );
+      const previousDetail = slug
+        ? queryClient.getQueryData<Snippet>(snippetKeys.detail(slug))
+        : undefined;
 
       queryClient.setQueriesData<SnippetPaginated>(
         { queryKey: snippetKeys.all },
@@ -83,15 +84,17 @@ export function useUpdateSnippet() {
           return {
             ...old,
             data: old.data.map((snippet) =>
-              snippet.slug === slug ? { ...snippet, ...payload } : snippet,
+              snippet.id === id ? { ...snippet, ...payload } : snippet,
             ),
           };
         },
       );
 
-      queryClient.setQueryData<Snippet>(snippetKeys.detail(slug), (old) =>
-        old ? { ...old, ...payload } : old,
-      );
+      if (slug) {
+        queryClient.setQueryData<Snippet>(snippetKeys.detail(slug), (old) =>
+          old ? { ...old, ...payload } : old,
+        );
+      }
 
       return { previousLists, previousDetail, slug };
     },
@@ -115,9 +118,11 @@ export function useUpdateSnippet() {
     },
     onSettled: async (_data, _error, variables) => {
       await queryClient.invalidateQueries({ queryKey: snippetKeys.all });
-      await queryClient.invalidateQueries({
-        queryKey: snippetKeys.detail(variables.slug),
-      });
+      if (variables.slug) {
+        await queryClient.invalidateQueries({
+          queryKey: snippetKeys.detail(variables.slug),
+        });
+      }
     },
   });
 }
@@ -125,16 +130,17 @@ export function useUpdateSnippet() {
 export function useDeleteSnippet() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (slug: string) => snippetService.delete(slug),
-    onMutate: async (slug) => {
+    mutationFn: ({ id }: { id: number; slug?: string }) =>
+      snippetService.delete(id),
+    onMutate: async ({ id, slug }) => {
       await queryClient.cancelQueries({ queryKey: snippetKeys.all });
 
       const previousLists = queryClient.getQueriesData<SnippetPaginated>({
         queryKey: snippetKeys.all,
       });
-      const previousDetail = queryClient.getQueryData<Snippet>(
-        snippetKeys.detail(slug),
-      );
+      const previousDetail = slug
+        ? queryClient.getQueryData<Snippet>(snippetKeys.detail(slug))
+        : undefined;
 
       queryClient.setQueriesData<SnippetPaginated>(
         { queryKey: snippetKeys.all },
@@ -142,7 +148,7 @@ export function useDeleteSnippet() {
           if (!old?.data) return old;
           return {
             ...old,
-            data: old.data.filter((snippet) => snippet.slug !== slug),
+            data: old.data.filter((snippet) => snippet.id !== id),
             meta: {
               ...old.meta,
               total: Math.max(0, old.meta.total - 1),
@@ -151,7 +157,9 @@ export function useDeleteSnippet() {
         },
       );
 
-      queryClient.removeQueries({ queryKey: snippetKeys.detail(slug) });
+      if (slug) {
+        queryClient.removeQueries({ queryKey: snippetKeys.detail(slug) });
+      }
 
       return { previousLists, previousDetail, slug };
     },
@@ -173,11 +181,13 @@ export function useDeleteSnippet() {
       await queryClient.invalidateQueries({ queryKey: snippetKeys.all });
       toast.success("Snippet berhasil dihapus");
     },
-    onSettled: async (_data, _error, slug) => {
+    onSettled: async (_data, _error, variables) => {
       await queryClient.invalidateQueries({ queryKey: snippetKeys.all });
-      await queryClient.invalidateQueries({
-        queryKey: snippetKeys.detail(slug),
-      });
+      if (variables.slug) {
+        await queryClient.invalidateQueries({
+          queryKey: snippetKeys.detail(variables.slug),
+        });
+      }
     },
   });
 }

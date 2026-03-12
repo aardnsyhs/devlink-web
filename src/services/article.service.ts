@@ -10,8 +10,8 @@ export const articleService = {
   create: (payload: FormData | Record<string, unknown>) =>
     api.post<{ data: Article }>("/articles", payload),
 
-  update: (slug: string, payload: Record<string, unknown>) =>
-    api.put<{ data: Article }>(`/articles/${slug}`, payload),
+  update: (id: number, payload: Record<string, unknown>) =>
+    api.put<{ data: Article }>(`/articles/${id}`, payload),
 
-  delete: (slug: string) => api.delete(`/articles/${slug}`),
+  delete: (id: number) => api.delete(`/articles/${id}`),
 };

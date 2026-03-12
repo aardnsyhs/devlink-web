@@ -18,8 +18,8 @@ export const tagService = {
   create: (payload: { name: string }) =>
     api.post<{ data: Tag }>("/tags", payload),
 
-  update: (slug: string, payload: { name: string }) =>
-    api.put<{ data: Tag }>(`/tags/${slug}`, payload),
+  update: (id: number, payload: { name: string }) =>
+    api.put<{ data: Tag }>(`/tags/${id}`, payload),
 
-  delete: (slug: string) => api.delete(`/tags/${slug}`),
+  delete: (id: number) => api.delete(`/tags/${id}`),
 };

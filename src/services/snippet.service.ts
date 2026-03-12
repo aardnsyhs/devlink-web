@@ -20,8 +20,8 @@ export const snippetService = {
   create: (payload: Record<string, unknown>) =>
     api.post<{ data: Snippet }>("/snippets", payload),
 
-  update: (slug: string, payload: Record<string, unknown>) =>
-    api.put<{ data: Snippet }>(`/snippets/${slug}`, payload),
+  update: (id: number, payload: Record<string, unknown>) =>
+    api.put<{ data: Snippet }>(`/snippets/${id}`, payload),
 
-  delete: (slug: string) => api.delete(`/snippets/${slug}`),
+  delete: (id: number) => api.delete(`/snippets/${id}`),
 };

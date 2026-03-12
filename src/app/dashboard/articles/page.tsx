@@ -42,7 +42,7 @@ export default function DashboardArticlesPage() {
   const handleSubmit = (formData: ArticleSchema) => {
     if (editTarget) {
       updateArticle(
-        { slug: editTarget.slug, payload: formData },
+        { id: editTarget.id, slug: editTarget.slug, payload: formData },
         {
           onSuccess: () => {
             setDialogOpen(false);
@@ -188,7 +188,9 @@ export default function DashboardArticlesPage() {
                 </Button>
                 <DeleteDialog
                   title={article.title}
-                  onConfirm={() => deleteArticle(article.slug)}
+                  onConfirm={() =>
+                    deleteArticle({ id: article.id, slug: article.slug })
+                  }
                   isPending={deleting}
                 />
               </div>
