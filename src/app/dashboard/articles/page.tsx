@@ -6,6 +6,7 @@ import {
   useCreateArticle,
   useUpdateArticle,
   useDeleteArticle,
+  usePrefetchArticle,
 } from "@/hooks/useArticles";
 import { articleService } from "@/services/article.service";
 import { ArticleForm } from "@/components/article/ArticleForm";
@@ -43,6 +44,7 @@ export default function DashboardArticlesPage() {
   const { mutate: createArticle, isPending: creating } = useCreateArticle();
   const { mutate: updateArticle, isPending: updating } = useUpdateArticle();
   const { mutate: deleteArticle, isPending: deleting } = useDeleteArticle();
+  const prefetchArticle = usePrefetchArticle();
 
   const handleSubmit = (formData: ArticleSchema) => {
     if (editTarget) {
@@ -200,6 +202,8 @@ export default function DashboardArticlesPage() {
                   variant="ghost"
                   size="icon"
                   className="h-8 w-8"
+                  onMouseEnter={() => prefetchArticle(article.slug)}
+                  onFocus={() => prefetchArticle(article.slug)}
                   onClick={() => openEdit(article)}
                 >
                   <Pencil className="h-4 w-4" />

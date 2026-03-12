@@ -6,6 +6,7 @@ import {
   useDeleteSnippet,
   useCreateSnippet,
   useUpdateSnippet,
+  usePrefetchSnippet,
 } from "@/hooks/useSnippets";
 import { snippetService } from "@/services/snippet.service";
 import { SnippetForm } from "@/components/snippet/SnippetForm";
@@ -51,6 +52,7 @@ export default function DashboardSnippetsPage() {
   const { mutate: createSnippet, isPending: creating } = useCreateSnippet();
   const { mutate: updateSnippet, isPending: updating } = useUpdateSnippet();
   const { mutate: deleteSnippet, isPending: deleting } = useDeleteSnippet();
+  const prefetchSnippet = usePrefetchSnippet();
 
   const handleSubmit = (formData: SnippetSchema) => {
     if (editTarget) {
@@ -199,6 +201,8 @@ export default function DashboardSnippetsPage() {
                   variant="ghost"
                   size="icon"
                   className="h-8 w-8"
+                  onMouseEnter={() => prefetchSnippet(snippet.slug)}
+                  onFocus={() => prefetchSnippet(snippet.slug)}
                   onClick={() => openEdit(snippet)}
                 >
                   <Pencil className="h-4 w-4" />
