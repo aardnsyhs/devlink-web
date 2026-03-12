@@ -26,10 +26,27 @@ export const tagKeys = {
     [...tagKeys.all, "list", params] as const,
 };
 
+function normalizeMetaNumber(value: unknown): number {
+  if (Array.isArray(value)) {
+    return Number(value[value.length - 1] ?? 0) || 0;
+  }
+  return Number(value ?? 0) || 0;
+}
+
 export function useTags(params?: Record<string, unknown>) {
   return useQuery({
     queryKey: tagKeys.list(params),
-    queryFn: () => tagService.getAll(params).then((r) => r.data),
+    queryFn: () =>
+      tagService.getAll(params).then((r) => ({
+        ...r.data,
+        meta: {
+          ...r.data.meta,
+          current_page: normalizeMetaNumber(r.data.meta.current_page),
+          last_page: normalizeMetaNumber(r.data.meta.last_page),
+          per_page: normalizeMetaNumber(r.data.meta.per_page),
+          total: normalizeMetaNumber(r.data.meta.total),
+        },
+      })),
     staleTime: 5 * 60 * 1000,
   });
 }

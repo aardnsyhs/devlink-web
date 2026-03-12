@@ -35,6 +35,17 @@ export default function DashboardPage() {
   const publishedSnippets =
     snippets?.data?.filter((s) => s.status === "published").length ?? 0;
 
+  const normalizeTotal = (value: unknown): number => {
+    if (Array.isArray(value)) {
+      const last = value[value.length - 1];
+      return Number(last ?? 0) || 0;
+    }
+    return Number(value ?? 0) || 0;
+  };
+
+  const totalArticles = normalizeTotal(articles?.meta?.total);
+  const totalSnippets = normalizeTotal(snippets?.meta?.total);
+
   return (
     <div className="space-y-8">
       <div>
@@ -54,13 +65,13 @@ export default function DashboardPage() {
           <>
             <StatCard
               title="Total Articles"
-              value={articles?.meta?.total ?? 0}
+              value={totalArticles}
               icon={FileText}
               description={`${publishedArticles} published`}
             />
             <StatCard
               title="Total Snippets"
-              value={snippets?.meta?.total ?? 0}
+              value={totalSnippets}
               icon={Code2}
               description={`${publishedSnippets} published`}
             />
