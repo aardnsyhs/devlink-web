@@ -57,7 +57,7 @@ src/
 ### Installation
 
 ```bash
-git clone https://gitlab.com/duo5420735/devlink-web.git
+git clone https://github.com/aardnsyhs/devlink-web.git
 cd devlink-web
 
 yarn install
