@@ -4,9 +4,7 @@ import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useArticles } from "@/hooks/useArticles";
 import { useAllTags } from "@/hooks/useTags";
-import { ArticleCard } from "@/components/article/ArticleCard";
-import { ArticleCardSkeleton } from "@/components/shared/ContentSkeletons";
-import { EmptyStateIllustration } from "@/components/shared/EmptyStateIllustration";
+import { ArticleList } from "@/components/article/ArticleList";
 import { Pagination } from "@/components/shared/Pagination";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -125,27 +123,12 @@ export default function ArticlesPage() {
           </div>
         )}
       </div>
-      {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <ArticleCardSkeleton key={i} />
-          ))}
-        </div>
-      ) : data?.data?.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-center">
-          <EmptyStateIllustration variant="articles" className="mb-3" />
-          <p className="font-medium">Tidak ada artikel ditemukan</p>
-          <p className="text-sm text-muted-foreground mt-1">
-            Coba kata kunci lain
-          </p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {data?.data?.map((article) => (
-            <ArticleCard key={article.id} article={article} />
-          ))}
-        </div>
-      )}
+      <ArticleList
+        articles={data?.data}
+        isLoading={isLoading}
+        emptyMessage="Tidak ada artikel ditemukan"
+        emptySubMessage="Coba kata kunci lain"
+      />
       {data && (
         <Pagination
           currentPage={data.meta.current_page}

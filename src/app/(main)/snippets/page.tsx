@@ -4,9 +4,7 @@ import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useSnippets } from "@/hooks/useSnippets";
 import { useAllTags } from "@/hooks/useTags";
-import { SnippetCard } from "@/components/snippet/SnippetCard";
-import { SnippetCardSkeleton } from "@/components/shared/ContentSkeletons";
-import { EmptyStateIllustration } from "@/components/shared/EmptyStateIllustration";
+import { SnippetList } from "@/components/snippet/SnippetList";
 import { Pagination } from "@/components/shared/Pagination";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -172,24 +170,12 @@ export default function SnippetsPage() {
           </div>
         )}
       </div>
-      {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <SnippetCardSkeleton key={i} />
-          ))}
-        </div>
-      ) : data?.data?.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-center">
-          <EmptyStateIllustration variant="snippets" className="mb-3" />
-          <p className="font-medium">Tidak ada snippet ditemukan</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {data?.data?.map((snippet) => (
-            <SnippetCard key={snippet.id} snippet={snippet} />
-          ))}
-        </div>
-      )}
+      <SnippetList
+        snippets={data?.data}
+        isLoading={isLoading}
+        emptyMessage="Tidak ada snippet ditemukan"
+        emptySubMessage="Coba keyword, bahasa, atau tag lain"
+      />
       {data && (
         <Pagination
           currentPage={data.meta.current_page}

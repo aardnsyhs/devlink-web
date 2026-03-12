@@ -3,8 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Eye, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Snippet } from "@/types/snippet";
-import { highlightCodeWithShikiAutoTheme } from "@/lib/shiki";
-import { SnippetCodeViewer } from "@/components/snippet/SnippetCodeViewer";
+import { CodeBlock } from "@/components/snippet/CodeBlock";
 
 const languageColors: Record<string, string> = {
   php: "text-indigo-400",
@@ -53,12 +52,6 @@ export default async function SnippetDetailPage({
     );
   }
 
-  const { lightHtml, darkHtml } = await highlightCodeWithShikiAutoTheme(
-    snippet.code,
-    snippet.language,
-    hl,
-  );
-
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 space-y-6">
       <Button asChild variant="ghost" size="sm" className="gap-2 -ml-2">
@@ -92,11 +85,10 @@ export default async function SnippetDetailPage({
           </span>
         </div>
       </div>
-      <SnippetCodeViewer
+      <CodeBlock
         language={snippet.language}
         code={snippet.code}
-        lightHtml={lightHtml}
-        darkHtml={darkHtml}
+        highlightLines={hl}
       />
     </div>
   );
