@@ -2,7 +2,11 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { authService } from "@/services/auth.service";
 import { useAuthStore } from "@/store/authStore";
-import { LoginSchema, RegisterSchema } from "@/lib/validations/auth";
+import {
+  LoginSchema,
+  RegisterSchema,
+  UpdateProfileSchema,
+} from "@/lib/validations/auth";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 
@@ -59,6 +63,31 @@ export function useLogout() {
     onSettled: () => {
       logout();
       router.push("/login");
+    },
+  });
+}
+
+export function useUpdateProfile() {
+  const { setUser } = useAuthStore();
+
+  return useMutation({
+    mutationFn: (payload: UpdateProfileSchema) =>
+      authService.updateProfile({
+        name: payload.name,
+        email: payload.email,
+        ...(payload.password
+          ? {
+              password: payload.password,
+              password_confirmation: payload.password_confirmation,
+            }
+          : {}),
+      }),
+    onSuccess: ({ data }) => {
+      setUser(data.data.user);
+      toast.success("Profile berhasil diperbarui");
+    },
+    onError: (error: AxiosError<{ message?: string }>) => {
+      toast.error(getErrorMessage(error));
     },
   });
 }

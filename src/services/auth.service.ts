@@ -3,6 +3,7 @@ import {
   AuthResponse,
   LoginPayload,
   RegisterPayload,
+  UpdateProfilePayload,
   User,
 } from "@/types/auth";
 
@@ -15,5 +16,8 @@ export const authService = {
 
   logout: () => api.post("/auth/logout"),
 
-  me: () => api.get<{ data: User }>("/auth/me"),
+  me: () => api.get<{ data: { user: User } }>("/me"),
+
+  updateProfile: (payload: UpdateProfilePayload) =>
+    api.put<{ message: string; data: { user: User } }>("/me", payload),
 };

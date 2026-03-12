@@ -17,6 +17,13 @@ export interface RegisterPayload {
   password_confirmation: string;
 }
 
+export interface UpdateProfilePayload {
+  name: string;
+  email: string;
+  password?: string;
+  password_confirmation?: string;
+}
+
 export interface AuthResponse {
   data: {
     user: User;

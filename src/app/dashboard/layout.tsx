@@ -68,7 +68,12 @@ export default function DashboardLayout({
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{user?.name}</p>
+              <Link
+                href="/dashboard/profile"
+                className="text-sm font-medium truncate block hover:underline"
+              >
+                {user?.name}
+              </Link>
               <p className="text-xs text-muted-foreground truncate">
                 {user?.email}
               </p>
