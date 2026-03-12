@@ -51,6 +51,7 @@ export default function SnippetsPage() {
   const [activeLang, setActiveLang] = useState<string | null>(null);
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [isUrlReady, setIsUrlReady] = useState(false);
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
 
   const debouncedSearch = useDebounce(search, 400);
   const { data: tags } = useAllTags();
@@ -78,7 +79,7 @@ export default function SnippetsPage() {
   }, []);
 
   useEffect(() => {
-    if (!isUrlReady) return;
+    if (!isUrlReady || !hasUserInteracted) return;
 
     const params = new URLSearchParams();
 
@@ -100,6 +101,7 @@ export default function SnippetsPage() {
     });
   }, [
     isUrlReady,
+    hasUserInteracted,
     debouncedSearch,
     activeLang,
     activeTag,
@@ -125,6 +127,7 @@ export default function SnippetsPage() {
             placeholder="Cari snippet..."
             value={search}
             onChange={(e) => {
+              setHasUserInteracted(true);
               setSearch(e.target.value);
               setPage(1);
             }}
@@ -136,6 +139,7 @@ export default function SnippetsPage() {
             <button
               key={lang}
               onClick={() => {
+                setHasUserInteracted(true);
                 setActiveLang((p) => (p === lang ? null : lang));
                 setPage(1);
               }}
@@ -155,6 +159,7 @@ export default function SnippetsPage() {
               <button
                 key={tag.id}
                 onClick={() => {
+                  setHasUserInteracted(true);
                   setActiveTag((p) => (p === tag.slug ? null : tag.slug));
                   setPage(1);
                 }}
@@ -181,7 +186,10 @@ export default function SnippetsPage() {
           currentPage={data.meta.current_page}
           lastPage={data.meta.last_page}
           total={data.meta.total}
-          onPageChange={setPage}
+          onPageChange={(nextPage) => {
+            setHasUserInteracted(true);
+            setPage(nextPage);
+          }}
         />
       )}
     </div>

@@ -34,6 +34,7 @@ export default function ArticlesPage() {
   const [search, setSearch] = useState("");
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [isUrlReady, setIsUrlReady] = useState(false);
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
 
   const debouncedSearch = useDebounce(search, 400);
   const { data: tags } = useAllTags();
@@ -45,6 +46,7 @@ export default function ArticlesPage() {
   });
 
   const handleTagClick = (slug: string) => {
+    setHasUserInteracted(true);
     setActiveTag((prev) => (prev === slug ? null : slug));
     setPage(1);
   };
@@ -64,7 +66,7 @@ export default function ArticlesPage() {
   }, []);
 
   useEffect(() => {
-    if (!isUrlReady) return;
+    if (!isUrlReady || !hasUserInteracted) return;
 
     const params = new URLSearchParams();
 
@@ -83,7 +85,15 @@ export default function ArticlesPage() {
     router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, {
       scroll: false,
     });
-  }, [isUrlReady, debouncedSearch, activeTag, page, pathname, router]);
+  }, [
+    isUrlReady,
+    hasUserInteracted,
+    debouncedSearch,
+    activeTag,
+    page,
+    pathname,
+    router,
+  ]);
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 space-y-8">
@@ -102,6 +112,7 @@ export default function ArticlesPage() {
             placeholder="Cari artikel..."
             value={search}
             onChange={(e) => {
+              setHasUserInteracted(true);
               setSearch(e.target.value);
               setPage(1);
             }}
@@ -134,7 +145,10 @@ export default function ArticlesPage() {
           currentPage={data.meta.current_page}
           lastPage={data.meta.last_page}
           total={data.meta.total}
-          onPageChange={setPage}
+          onPageChange={(nextPage) => {
+            setHasUserInteracted(true);
+            setPage(nextPage);
+          }}
         />
       )}
     </div>
