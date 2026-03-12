@@ -26,6 +26,14 @@ export const metadata: Metadata = {
   },
   description:
     "DevLink adalah platform untuk berbagi artikel teknikal dan code snippet untuk developer.",
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico" },
+    ],
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
