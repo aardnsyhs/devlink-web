@@ -63,6 +63,7 @@ function withLineMetadata(
   showLineNumbers = true,
 ) {
   const highlighted = parseHighlightedLines(highlightedLines);
+  const hasHighlightedLines = highlighted.size > 0;
   let lineNumber = 0;
 
   return html.replace(/<span class="line">/g, () => {
@@ -70,12 +71,13 @@ function withLineMetadata(
     const classes = [
       "line",
       highlighted.has(lineNumber) ? "is-highlighted" : "",
+      hasHighlightedLines && !highlighted.has(lineNumber) ? "is-dimmed" : "",
       showLineNumbers ? "has-line-number" : "without-line-number",
     ]
       .filter(Boolean)
       .join(" ");
 
-    return `<span class="${classes}" data-line="${lineNumber}">`;
+    return `<span id="L${lineNumber}" class="${classes}" data-line="${lineNumber}">`;
   });
 }
 

@@ -6,8 +6,13 @@ interface CodeBlockProps {
   language: string;
   showHeader?: boolean;
   highlightLines?: string;
-  filename?: string;
   showLineNumbers?: boolean;
+}
+
+function countCodeLines(code: string) {
+  if (!code) return 0;
+
+  return code.split("\n").length;
 }
 
 export async function CodeBlock({
@@ -15,9 +20,9 @@ export async function CodeBlock({
   language,
   showHeader = true,
   highlightLines,
-  filename,
   showLineNumbers = true,
 }: CodeBlockProps) {
+  const lineCount = countCodeLines(code);
   const { lightHtml, darkHtml, normalizedLanguage } =
     await highlightCodeWithShikiAutoTheme(
     code,
@@ -31,14 +36,17 @@ export async function CodeBlock({
       {showHeader && (
         <div className="flex items-center justify-between gap-3 px-4 py-2.5 bg-zinc-100 dark:bg-zinc-800 border-b border-zinc-200 dark:border-zinc-700">
           <div className="min-w-0 flex items-center gap-3">
-            {filename ? (
-              <span className="truncate text-xs font-medium text-zinc-700 dark:text-zinc-200">
-                {filename}
-              </span>
-            ) : null}
             <span className="rounded-md border border-zinc-200 bg-white px-2 py-0.5 text-[11px] font-mono text-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-400">
               {normalizedLanguage}
             </span>
+            <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+              {lineCount} lines
+            </span>
+            {highlightLines ? (
+              <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                focus: {highlightLines}
+              </span>
+            ) : null}
           </div>
           <CopyCodeButton code={code} />
         </div>
