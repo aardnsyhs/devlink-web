@@ -1,6 +1,32 @@
+import { cache } from "react";
 import { codeToHtml } from "shiki";
 
 type ShikiTheme = "github-dark" | "github-light";
+
+const LANGUAGE_ALIASES: Record<string, string> = {
+  csharp: "csharp",
+  "c#": "csharp",
+  js: "javascript",
+  jsx: "jsx",
+  ts: "typescript",
+  tsx: "tsx",
+  py: "python",
+  rb: "ruby",
+  sh: "bash",
+  shell: "bash",
+  zsh: "bash",
+  yml: "yaml",
+  md: "markdown",
+  mysql: "sql",
+  postgres: "sql",
+  plaintext: "text",
+};
+
+function normalizeLanguage(language?: string) {
+  const normalized = language?.toLowerCase().trim() || "text";
+
+  return LANGUAGE_ALIASES[normalized] ?? normalized;
+}
 
 function parseHighlightedLines(input?: string) {
   const highlighted = new Set<number>();
@@ -31,51 +57,98 @@ function parseHighlightedLines(input?: string) {
   return highlighted;
 }
 
-function withLineMetadata(html: string, highlightedLines?: string) {
+function withLineMetadata(
+  html: string,
+  highlightedLines?: string,
+  showLineNumbers = true,
+) {
   const highlighted = parseHighlightedLines(highlightedLines);
   let lineNumber = 0;
 
   return html.replace(/<span class="line">/g, () => {
     lineNumber += 1;
-    const extra = highlighted.has(lineNumber) ? " is-highlighted" : "";
-    return `<span class="line${extra}" data-line="${lineNumber}">`;
+    const classes = [
+      "line",
+      highlighted.has(lineNumber) ? "is-highlighted" : "",
+      showLineNumbers ? "has-line-number" : "without-line-number",
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+    return `<span class="${classes}" data-line="${lineNumber}">`;
   });
 }
+
+const highlightCodeCached = cache(
+  async (
+    code: string,
+    language: string,
+    theme: ShikiTheme,
+    highlightedLines?: string,
+    showLineNumbers = true,
+  ) => {
+    const normalizedLanguage = normalizeLanguage(language);
+
+    try {
+      const html = await codeToHtml(code, {
+        lang: normalizedLanguage,
+        theme,
+      });
+
+      return withLineMetadata(html, highlightedLines, showLineNumbers);
+    } catch {
+      const html = await codeToHtml(code, {
+        lang: "text",
+        theme,
+      });
+
+      return withLineMetadata(html, highlightedLines, showLineNumbers);
+    }
+  },
+);
 
 export async function highlightCodeWithShiki(
   code: string,
   language: string,
   theme: ShikiTheme,
   highlightedLines?: string,
+  showLineNumbers = true,
 ) {
-  const normalizedLanguage = language?.toLowerCase() || "text";
-
-  try {
-    const html = await codeToHtml(code, {
-      lang: normalizedLanguage,
-      theme,
-    });
-
-    return withLineMetadata(html, highlightedLines);
-  } catch {
-    const html = await codeToHtml(code, {
-      lang: "text",
-      theme,
-    });
-
-    return withLineMetadata(html, highlightedLines);
-  }
+  return highlightCodeCached(
+    code,
+    language,
+    theme,
+    highlightedLines,
+    showLineNumbers,
+  );
 }
 
 export async function highlightCodeWithShikiAutoTheme(
   code: string,
   language: string,
   highlightedLines?: string,
+  showLineNumbers = true,
 ) {
   const [lightHtml, darkHtml] = await Promise.all([
-    highlightCodeWithShiki(code, language, "github-light", highlightedLines),
-    highlightCodeWithShiki(code, language, "github-dark", highlightedLines),
+    highlightCodeWithShiki(
+      code,
+      language,
+      "github-light",
+      highlightedLines,
+      showLineNumbers,
+    ),
+    highlightCodeWithShiki(
+      code,
+      language,
+      "github-dark",
+      highlightedLines,
+      showLineNumbers,
+    ),
   ]);
 
-  return { lightHtml, darkHtml };
+  return {
+    darkHtml,
+    lightHtml,
+    normalizedLanguage: normalizeLanguage(language),
+  };
 }

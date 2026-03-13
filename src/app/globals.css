@@ -143,6 +143,10 @@
   padding-left: 3.25rem;
 }
 
+.snippet-code-block .line.without-line-number {
+  padding-left: 0;
+}
+
 .snippet-code-block .line::before {
   content: attr(data-line);
   position: absolute;
@@ -151,6 +155,10 @@
   text-align: right;
   color: rgb(113 113 122);
   user-select: none;
+}
+
+.snippet-code-block .line.without-line-number::before {
+  content: none;
 }
 
 .snippet-code-block .line.is-highlighted {
