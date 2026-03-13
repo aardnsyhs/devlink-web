@@ -19,6 +19,7 @@ export function CopyCodeButton({ code }: { code: string }) {
 
   return (
     <Button
+      type="button"
       variant="ghost"
       size="sm"
       className="h-7 gap-1.5 text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"

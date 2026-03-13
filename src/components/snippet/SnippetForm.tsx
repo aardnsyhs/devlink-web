@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { SnippetLivePreview } from "@/components/snippet/SnippetLivePreview";
 import { X } from "lucide-react";
 
 const LANGUAGES = [
@@ -68,10 +69,21 @@ export function SnippetForm({
     },
   });
 
-  const selectedTagIds = useWatch({
-    control,
-    name: "tag_ids",
-  }) ?? [];
+  const selectedTagIds =
+    useWatch({
+      control,
+      name: "tag_ids",
+    }) ?? [];
+  const previewCode =
+    useWatch({
+      control,
+      name: "code",
+    }) ?? "";
+  const previewLanguage =
+    useWatch({
+      control,
+      name: "language",
+    }) ?? "text";
 
   const toggleTag = (id: number) => {
     const current = selectedTagIds;
@@ -151,44 +163,50 @@ export function SnippetForm({
           />
         </div>
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="code">Code</Label>
-        <Textarea
-          id="code"
-          placeholder="Tulis code di sini..."
-          rows={12}
-          className="font-mono text-sm"
-          {...register("code")}
-        />
-        {errors.code && (
-          <p className="text-xs text-red-500">{errors.code.message}</p>
-        )}
-        <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
-          <p className="font-medium text-zinc-800 dark:text-zinc-200">
-            Notation Shiki yang didukung
-          </p>
-          <div className="mt-2 space-y-1 font-mono text-[11px] leading-relaxed">
-            <p>
-              <span className="text-zinc-500">{"// [!code highlight]"}</span>{" "}
-              sorot satu baris
+      <div className="grid gap-6 xl:grid-cols-2 xl:items-start">
+        <div className="space-y-2">
+          <Label htmlFor="code">Code</Label>
+          <Textarea
+            id="code"
+            placeholder="Tulis code di sini..."
+            rows={18}
+            className="min-h-104 font-mono text-sm"
+            {...register("code")}
+          />
+          {errors.code && (
+            <p className="text-xs text-red-500">{errors.code.message}</p>
+          )}
+          <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
+            <p className="font-medium text-zinc-800 dark:text-zinc-200">
+              Notation Shiki yang didukung
             </p>
-            <p>
-              <span className="text-zinc-500">{"// [!code focus:3]"}</span>{" "}
-              fokuskan 3 baris berikutnya
-            </p>
-            <p>
-              <span className="text-zinc-500">{"// [!code ++]"}</span> tandai
-              baris sebagai penambahan
-            </p>
-            <p>
-              <span className="text-zinc-500">{"// [!code --]"}</span> tandai
-              baris sebagai penghapusan
-            </p>
-            <p>
-              <span className="text-zinc-500">[[transaction]]</span> highlight
-              kata tertentu
-            </p>
+            <div className="mt-2 space-y-1 font-mono text-[11px] leading-relaxed">
+              <p>
+                <span className="text-zinc-500">{"// [!code highlight]"}</span>{" "}
+                sorot satu baris
+              </p>
+              <p>
+                <span className="text-zinc-500">{"// [!code focus:3]"}</span>{" "}
+                fokuskan 3 baris berikutnya
+              </p>
+              <p>
+                <span className="text-zinc-500">{"// [!code ++]"}</span> tandai
+                baris sebagai penambahan
+              </p>
+              <p>
+                <span className="text-zinc-500">{"// [!code --]"}</span> tandai
+                baris sebagai penghapusan
+              </p>
+              <p>
+                <span className="text-zinc-500">[[transaction]]</span> highlight
+                kata tertentu
+              </p>
+            </div>
           </div>
+        </div>
+        <div className="space-y-2">
+          <Label>Preview</Label>
+          <SnippetLivePreview code={previewCode} language={previewLanguage} />
         </div>
       </div>
       {tags.length > 0 && (

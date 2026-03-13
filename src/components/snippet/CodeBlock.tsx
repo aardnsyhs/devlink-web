@@ -1,6 +1,7 @@
 import { highlightCodeWithShikiAutoTheme } from "@/lib/shiki";
 import { CopyCodeButton } from "@/components/snippet/CopyCodeButton";
 import { CodeBlockEnhancer } from "@/components/snippet/CodeBlockEnhancer";
+import { CodeBlockViewport } from "@/components/snippet/CodeBlockViewport";
 
 interface CodeBlockProps {
   code: string;
@@ -72,14 +73,16 @@ export async function CodeBlock({
           <CopyCodeButton code={code} />
         </div>
       )}
-      <div
-        className="overflow-x-auto dark:hidden [&_pre]:m-0! [&_pre]:p-5! [&_pre]:text-sm [&_pre]:leading-relaxed"
-        dangerouslySetInnerHTML={{ __html: lightHtml }}
-      />
-      <div
-        className="hidden overflow-x-auto dark:block [&_pre]:m-0! [&_pre]:p-5! [&_pre]:text-sm [&_pre]:leading-relaxed"
-        dangerouslySetInnerHTML={{ __html: darkHtml }}
-      />
+      <CodeBlockViewport lineCount={lineCount}>
+        <div
+          className="overflow-x-auto bg-[#f6f7fb] dark:hidden [&_pre]:m-0! [&_pre]:bg-transparent! [&_pre]:p-5! [&_pre]:text-sm [&_pre]:leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: lightHtml }}
+        />
+        <div
+          className="hidden overflow-x-auto bg-[#1e2430] dark:block [&_pre]:m-0! [&_pre]:bg-transparent! [&_pre]:p-5! [&_pre]:text-sm [&_pre]:leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: darkHtml }}
+        />
+      </CodeBlockViewport>
     </div>
   );
 }

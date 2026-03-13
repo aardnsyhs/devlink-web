@@ -1,10 +1,10 @@
 import { cache } from "react";
-import { codeToHtml } from "shiki";
+import { codeToHtml, type ThemeRegistration } from "shiki";
 
 type ThemeKey = "dark" | "light";
 type LineAnnotationKind = "highlight" | "focus" | "add" | "remove";
 
-type CodeStats = {
+export type CodeStats = {
   addedCount: number;
   hasDiff: boolean;
   lineCount: number;
@@ -22,15 +22,17 @@ type CodeAnnotations = {
   }>;
 };
 
-const DEVLINK_THEMES = {
+const DEVLINK_THEMES: Record<ThemeKey, ThemeRegistration> = {
   dark: {
     bg: "#1e2430",
+    fg: "#e7ecf3",
     colors: {
       "editor.background": "#1e2430",
       "editor.foreground": "#e7ecf3",
     },
     name: "devlink-dark",
-    tokenColors: [
+    settings: [
+      { settings: { foreground: "#e7ecf3" } },
       { scope: ["comment"], settings: { foreground: "#6b7280", fontStyle: "italic" } },
       { scope: ["keyword", "storage"], settings: { foreground: "#ff7a90" } },
       { scope: ["string"], settings: { foreground: "#98e4c6" } },
@@ -44,12 +46,14 @@ const DEVLINK_THEMES = {
   },
   light: {
     bg: "#f6f7fb",
+    fg: "#18212f",
     colors: {
       "editor.background": "#f6f7fb",
       "editor.foreground": "#18212f",
     },
     name: "devlink-light",
-    tokenColors: [
+    settings: [
+      { settings: { foreground: "#18212f" } },
       { scope: ["comment"], settings: { foreground: "#7b8698", fontStyle: "italic" } },
       { scope: ["keyword", "storage"], settings: { foreground: "#d72660" } },
       { scope: ["string"], settings: { foreground: "#0f9d74" } },
@@ -61,7 +65,7 @@ const DEVLINK_THEMES = {
     ],
     type: "light",
   },
-} as const;
+};
 
 const LANGUAGE_ALIASES: Record<string, string> = {
   "c#": "csharp",

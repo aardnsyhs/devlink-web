@@ -101,13 +101,13 @@ export default function DashboardSnippetsPage() {
           Snippet Baru
         </Button>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogContent className="w-[calc(100%-2rem)] max-h-[92vh] overflow-hidden p-0 sm:max-w-4xl">
+          <DialogContent className="w-[calc(100vw-2rem)] max-h-[94vh] overflow-hidden p-0 sm:max-w-6xl">
             <DialogHeader className="border-b px-6 py-4">
               <DialogTitle>
                 {editTarget ? "Edit Snippet" : "Buat Snippet Baru"}
               </DialogTitle>
             </DialogHeader>
-            <div className="overflow-y-auto px-6 py-5">
+            <div className="overflow-y-auto px-6 py-5 max-h-[calc(94vh-5rem)]">
               <SnippetForm
                 key={editTarget?.id ?? "create"}
                 defaultValues={editTarget ?? undefined}

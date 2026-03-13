@@ -147,6 +147,11 @@
     box-shadow 160ms ease;
 }
 
+.snippet-code-block pre,
+.snippet-code-block code {
+  font-family: var(--font-jetbrains-mono), monospace !important;
+}
+
 .snippet-code-block .line.without-line-number {
   padding-left: 0;
 }

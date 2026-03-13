@@ -99,6 +99,7 @@ yarn start
 ## Shiki Notation
 
 DevLink snippet viewer supports inline code notation for richer presentation.
+Snippet form in dashboard also renders a live preview using the same Shiki pipeline as the public snippet page.
 
 ### Line Highlight
 
