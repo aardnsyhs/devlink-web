@@ -51,14 +51,17 @@ export function TagFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
+      <DialogContent className="w-[calc(100vw-2rem)] max-h-[90vh] overflow-hidden p-0 sm:max-w-md">
+        <DialogHeader className="sticky top-0 z-10 border-b bg-background px-6 py-4">
           <DialogTitle>
             {defaultValues ? "Edit Tag" : "Buat Tag Baru"}
           </DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit(handleFormSubmit)}>
-          <div className="py-4 space-y-2">
+        <form
+          onSubmit={handleSubmit(handleFormSubmit)}
+          className="flex max-h-[calc(90vh-4.5rem)] flex-col"
+        >
+          <div className="flex-1 overflow-y-auto px-6 py-5 space-y-2">
             <Label htmlFor="name">Nama Tag</Label>
             <Input
               id="name"
@@ -70,7 +73,7 @@ export function TagFormDialog({
               <p className="text-xs text-red-500">{errors.name.message}</p>
             )}
           </div>
-          <DialogFooter className="gap-2">
+          <DialogFooter className="gap-2 px-6">
             <Button
               type="button"
               variant="outline"

@@ -102,7 +102,7 @@ export default function DashboardSnippetsPage() {
         </Button>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogContent className="w-[calc(100vw-2rem)] max-h-[94vh] overflow-hidden p-0 sm:max-w-6xl">
-            <DialogHeader className="border-b px-6 py-4">
+            <DialogHeader className="sticky top-0 z-10 border-b bg-background px-6 py-4">
               <DialogTitle>
                 {editTarget ? "Edit Snippet" : "Buat Snippet Baru"}
               </DialogTitle>
