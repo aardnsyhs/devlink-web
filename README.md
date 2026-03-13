@@ -20,6 +20,7 @@ A platform for sharing technical articles and code snippets for developers. Buil
 - Browse and search technical articles with tag filtering
 - Browse and search code snippets with language & tag filtering
 - Automatic syntax highlighting (light & dark mode) via Shiki
+- Advanced code presentation with line permalink, diff/focus notation, and word highlighting
 - Authentication (login & register)
 - Dashboard to manage articles, snippets, and tags (full CRUD)
 - Dark mode support
@@ -94,3 +95,43 @@ yarn start
 | `yarn build` | Build for production         |
 | `yarn start` | Start the production server  |
 | `yarn lint`  | Run ESLint                   |
+
+## Shiki Notation
+
+DevLink snippet viewer supports inline code notation for richer presentation.
+
+### Line Highlight
+
+```php
+$order = Order::create($data); // [!code highlight]
+```
+
+### Focus Next N Lines
+
+```php
+// [!code focus:3]
+DB::beginTransaction();
+$order = Order::create($data);
+DB::commit();
+```
+
+### Diff Style
+
+```php
+$legacyTotal = 0; // [!code --]
+$total = $calculator->calculate($items); // [!code ++]
+```
+
+### Word Highlight
+
+Wrap important tokens with `[[...]]`:
+
+```php
+return DB::[[transaction]](function () use ($data) {
+    // ...
+});
+```
+
+### Line Permalink
+
+On snippet detail pages, click the line-number gutter to copy a direct permalink such as `#L12`.

@@ -155,6 +155,7 @@
   position: absolute;
   inset: 0 auto 0 0;
   width: 3rem;
+  cursor: pointer;
   opacity: 0;
   z-index: 1;
 }
@@ -178,12 +179,12 @@
 }
 
 .snippet-code-block .line:hover::before,
-.snippet-code-block .line:target::before {
+.snippet-code-block .line.is-targeted::before {
   color: rgb(244 244 245);
 }
 
 .snippet-code-block .line:hover .line-anchor,
-.snippet-code-block .line:target .line-anchor,
+.snippet-code-block .line.is-targeted .line-anchor,
 .snippet-code-block .line:focus-within .line-anchor {
   opacity: 1;
 }
@@ -203,6 +204,14 @@
   box-shadow: inset 3px 0 0 rgb(34 197 94 / 0.9);
 }
 
+.snippet-code-block .line.is-added-start {
+  border-top-right-radius: 0.5rem;
+}
+
+.snippet-code-block .line.is-added-end {
+  border-bottom-right-radius: 0.5rem;
+}
+
 .snippet-code-block .line.is-removed {
   background:
     linear-gradient(90deg, rgb(239 68 68 / 0.18), transparent 28%),
@@ -210,15 +219,30 @@
   box-shadow: inset 3px 0 0 rgb(239 68 68 / 0.9);
 }
 
+.snippet-code-block .line.is-removed-start {
+  border-top-right-radius: 0.5rem;
+}
+
+.snippet-code-block .line.is-removed-end {
+  border-bottom-right-radius: 0.5rem;
+}
+
 .snippet-code-block .line.is-dimmed {
   opacity: 0.4;
 }
 
-.snippet-code-block .line:target {
+.snippet-code-block .line.is-targeted {
   background: rgb(59 130 246 / 0.16);
   box-shadow:
     inset 4px 0 0 rgb(59 130 246 / 0.95),
     inset 0 0 0 1px rgb(59 130 246 / 0.18);
+}
+
+.snippet-code-block .highlighted-word {
+  border-radius: 0.3rem;
+  background: rgb(250 204 21 / 0.22);
+  box-shadow: inset 0 -1px 0 rgb(250 204 21 / 0.7);
+  padding: 0 0.1rem;
 }
 
 .dark .snippet-code-block .line::before {
@@ -226,7 +250,7 @@
 }
 
 .dark .snippet-code-block .line:hover::before,
-.dark .snippet-code-block .line:target::before {
+.dark .snippet-code-block .line.is-targeted::before {
   color: rgb(250 250 250);
 }
 
@@ -252,9 +276,14 @@
   box-shadow: inset 3px 0 0 rgb(248 113 113 / 0.95);
 }
 
-.dark .snippet-code-block .line:target {
+.dark .snippet-code-block .line.is-targeted {
   background: rgb(96 165 250 / 0.18);
   box-shadow:
     inset 4px 0 0 rgb(147 197 253 / 0.98),
     inset 0 0 0 1px rgb(96 165 250 / 0.2);
+}
+
+.dark .snippet-code-block .highlighted-word {
+  background: rgb(250 204 21 / 0.2);
+  box-shadow: inset 0 -1px 0 rgb(250 204 21 / 0.78);
 }

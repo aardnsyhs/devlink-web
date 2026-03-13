@@ -1,5 +1,6 @@
 import { highlightCodeWithShikiAutoTheme } from "@/lib/shiki";
 import { CopyCodeButton } from "@/components/snippet/CopyCodeButton";
+import { CodeBlockEnhancer } from "@/components/snippet/CodeBlockEnhancer";
 
 interface CodeBlockProps {
   code: string;
@@ -22,17 +23,22 @@ export async function CodeBlock({
   highlightLines,
   showLineNumbers = true,
 }: CodeBlockProps) {
-  const lineCount = countCodeLines(code);
-  const { lightHtml, darkHtml, normalizedLanguage } =
+  const blockId = `code-block-${crypto.randomUUID()}`;
+  const { lightHtml, darkHtml, normalizedLanguage, stats } =
     await highlightCodeWithShikiAutoTheme(
-    code,
-    language,
-    highlightLines,
-    showLineNumbers,
-  );
+      code,
+      language,
+      highlightLines,
+      showLineNumbers,
+    );
+  const lineCount = stats.lineCount || countCodeLines(code);
 
   return (
-    <div className="snippet-code-block relative rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800">
+    <div
+      id={blockId}
+      className="snippet-code-block relative rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800"
+    >
+      <CodeBlockEnhancer blockId={blockId} />
       {showHeader && (
         <div className="flex items-center justify-between gap-3 px-4 py-2.5 bg-zinc-100 dark:bg-zinc-800 border-b border-zinc-200 dark:border-zinc-700">
           <div className="min-w-0 flex items-center gap-3">
@@ -42,6 +48,21 @@ export async function CodeBlock({
             <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
               {lineCount} lines
             </span>
+            {stats.hasDiff ? (
+              <>
+                <span className="rounded-md border border-emerald-500/25 bg-emerald-500/10 px-2 py-0.5 text-[11px] text-emerald-300 dark:text-emerald-300">
+                  diff view
+                </span>
+                <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                  +{stats.addedCount} / -{stats.removedCount}
+                </span>
+              </>
+            ) : null}
+            {stats.wordHighlightCount > 0 ? (
+              <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                {stats.wordHighlightCount} word focus
+              </span>
+            ) : null}
             {highlightLines ? (
               <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
                 focus: {highlightLines}

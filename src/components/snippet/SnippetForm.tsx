@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { snippetSchema, SnippetSchema } from "@/lib/validations/snippet";
 import { useTags } from "@/hooks/useTags";
@@ -54,7 +54,6 @@ export function SnippetForm({
     register,
     handleSubmit,
     control,
-    watch,
     setValue,
     formState: { errors },
   } = useForm<SnippetSchema>({
@@ -69,7 +68,10 @@ export function SnippetForm({
     },
   });
 
-  const selectedTagIds = watch("tag_ids") ?? [];
+  const selectedTagIds = useWatch({
+    control,
+    name: "tag_ids",
+  }) ?? [];
 
   const toggleTag = (id: number) => {
     const current = selectedTagIds;
@@ -161,6 +163,33 @@ export function SnippetForm({
         {errors.code && (
           <p className="text-xs text-red-500">{errors.code.message}</p>
         )}
+        <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
+          <p className="font-medium text-zinc-800 dark:text-zinc-200">
+            Notation Shiki yang didukung
+          </p>
+          <div className="mt-2 space-y-1 font-mono text-[11px] leading-relaxed">
+            <p>
+              <span className="text-zinc-500">{"// [!code highlight]"}</span>{" "}
+              sorot satu baris
+            </p>
+            <p>
+              <span className="text-zinc-500">{"// [!code focus:3]"}</span>{" "}
+              fokuskan 3 baris berikutnya
+            </p>
+            <p>
+              <span className="text-zinc-500">{"// [!code ++]"}</span> tandai
+              baris sebagai penambahan
+            </p>
+            <p>
+              <span className="text-zinc-500">{"// [!code --]"}</span> tandai
+              baris sebagai penghapusan
+            </p>
+            <p>
+              <span className="text-zinc-500">[[transaction]]</span> highlight
+              kata tertentu
+            </p>
+          </div>
+        </div>
       </div>
       {tags.length > 0 && (
         <div className="space-y-2">
