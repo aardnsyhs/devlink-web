@@ -3,6 +3,7 @@ import { snippetService } from "@/services/snippet.service";
 import { toast } from "sonner";
 import { Snippet } from "@/types/snippet";
 import { getApiErrorMessage } from "@/lib/api-error";
+import { withQueryTelemetry } from "@/lib/query-telemetry";
 
 type SnippetMutationPayload = Record<string, unknown> & {
   tag_ids?: number[];
@@ -45,23 +46,28 @@ export function useSnippets(params?: Record<string, unknown>) {
   return useQuery({
     queryKey: snippetKeys.list(params),
     queryFn: ({ signal }) =>
-      snippetService.getAll(params, signal).then((r) => ({
-        ...r.data,
-        meta: {
-          ...r.data.meta,
-          current_page: normalizeMetaNumber(r.data.meta.current_page),
-          last_page: normalizeMetaNumber(r.data.meta.last_page),
-          per_page: normalizeMetaNumber(r.data.meta.per_page),
-          total: normalizeMetaNumber(r.data.meta.total),
-        },
-      })),
+      withQueryTelemetry(`snippets.list:${JSON.stringify(params ?? {})}`, () =>
+        snippetService.getAll(params, signal).then((r) => ({
+          ...r.data,
+          meta: {
+            ...r.data.meta,
+            current_page: normalizeMetaNumber(r.data.meta.current_page),
+            last_page: normalizeMetaNumber(r.data.meta.last_page),
+            per_page: normalizeMetaNumber(r.data.meta.per_page),
+            total: normalizeMetaNumber(r.data.meta.total),
+          },
+        })),
+      ),
   });
 }
 
 export function useSnippet(slug: string) {
   return useQuery({
     queryKey: snippetKeys.detail(slug),
-    queryFn: () => snippetService.getBySlug(slug).then((r) => r.data.data),
+    queryFn: () =>
+      withQueryTelemetry(`snippets.detail:${slug}`, () =>
+        snippetService.getBySlug(slug).then((r) => r.data.data),
+      ),
     enabled: !!slug,
   });
 }
@@ -72,7 +78,10 @@ export function usePrefetchSnippet() {
   return (slug: string) =>
     queryClient.prefetchQuery({
       queryKey: snippetKeys.detail(slug),
-      queryFn: () => snippetService.getBySlug(slug).then((r) => r.data.data),
+      queryFn: () =>
+        withQueryTelemetry(`snippets.prefetch:${slug}`, () =>
+          snippetService.getBySlug(slug).then((r) => r.data.data),
+        ),
       staleTime: 60 * 1000,
     });
 }

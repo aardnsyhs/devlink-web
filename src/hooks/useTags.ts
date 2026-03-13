@@ -4,6 +4,7 @@ import api from "@/lib/api";
 import { Tag } from "@/types/tag";
 import { toast } from "sonner";
 import { getApiErrorMessage } from "@/lib/api-error";
+import { withQueryTelemetry } from "@/lib/query-telemetry";
 
 type TagPaginated = {
   data: Tag[];
@@ -32,16 +33,18 @@ export function useTags(params?: Record<string, unknown>) {
   return useQuery({
     queryKey: tagKeys.list(params),
     queryFn: ({ signal }) =>
-      tagService.getAll(params, signal).then((r) => ({
-        ...r.data,
-        meta: {
-          ...r.data.meta,
-          current_page: normalizeMetaNumber(r.data.meta.current_page),
-          last_page: normalizeMetaNumber(r.data.meta.last_page),
-          per_page: normalizeMetaNumber(r.data.meta.per_page),
-          total: normalizeMetaNumber(r.data.meta.total),
-        },
-      })),
+      withQueryTelemetry(`tags.list:${JSON.stringify(params ?? {})}`, () =>
+        tagService.getAll(params, signal).then((r) => ({
+          ...r.data,
+          meta: {
+            ...r.data.meta,
+            current_page: normalizeMetaNumber(r.data.meta.current_page),
+            last_page: normalizeMetaNumber(r.data.meta.last_page),
+            per_page: normalizeMetaNumber(r.data.meta.per_page),
+            total: normalizeMetaNumber(r.data.meta.total),
+          },
+        })),
+      ),
     staleTime: 5 * 60 * 1000,
   });
 }
@@ -50,9 +53,11 @@ export function useAllTags() {
   return useQuery({
     queryKey: tagKeys.all,
     queryFn: ({ signal }) =>
-      api
-        .get<{ data: Tag[] }>("/tags", { params: { per_page: 100 }, signal })
-        .then((r) => r.data.data),
+      withQueryTelemetry("tags.all", () =>
+        api
+          .get<{ data: Tag[] }>("/tags", { params: { per_page: 100 }, signal })
+          .then((r) => r.data.data),
+      ),
     staleTime: 5 * 60 * 1000,
   });
 }

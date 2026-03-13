@@ -3,6 +3,7 @@ import { articleService } from "@/services/article.service";
 import { toast } from "sonner";
 import { Article, ArticlePaginated } from "@/types/article";
 import { getApiErrorMessage } from "@/lib/api-error";
+import { withQueryTelemetry } from "@/lib/query-telemetry";
 
 type ArticleMutationPayload = Record<string, unknown> & {
   tag_ids?: number[];
@@ -35,23 +36,28 @@ export function useArticles(params?: Record<string, unknown>) {
   return useQuery({
     queryKey: articleKeys.list(params),
     queryFn: ({ signal }) =>
-      articleService.getAll(params, signal).then((r) => ({
-        ...r.data,
-        meta: {
-          ...r.data.meta,
-          current_page: normalizeMetaNumber(r.data.meta.current_page),
-          last_page: normalizeMetaNumber(r.data.meta.last_page),
-          per_page: normalizeMetaNumber(r.data.meta.per_page),
-          total: normalizeMetaNumber(r.data.meta.total),
-        },
-      })),
+      withQueryTelemetry(`articles.list:${JSON.stringify(params ?? {})}`, () =>
+        articleService.getAll(params, signal).then((r) => ({
+          ...r.data,
+          meta: {
+            ...r.data.meta,
+            current_page: normalizeMetaNumber(r.data.meta.current_page),
+            last_page: normalizeMetaNumber(r.data.meta.last_page),
+            per_page: normalizeMetaNumber(r.data.meta.per_page),
+            total: normalizeMetaNumber(r.data.meta.total),
+          },
+        })),
+      ),
   });
 }
 
 export function useArticle(slug: string) {
   return useQuery({
     queryKey: articleKeys.detail(slug),
-    queryFn: () => articleService.getBySlug(slug).then((r) => r.data.data),
+    queryFn: () =>
+      withQueryTelemetry(`articles.detail:${slug}`, () =>
+        articleService.getBySlug(slug).then((r) => r.data.data),
+      ),
     enabled: !!slug,
   });
 }
@@ -62,7 +68,10 @@ export function usePrefetchArticle() {
   return (slug: string) =>
     queryClient.prefetchQuery({
       queryKey: articleKeys.detail(slug),
-      queryFn: () => articleService.getBySlug(slug).then((r) => r.data.data),
+      queryFn: () =>
+        withQueryTelemetry(`articles.prefetch:${slug}`, () =>
+          articleService.getBySlug(slug).then((r) => r.data.data),
+        ),
       staleTime: 60 * 1000,
     });
 }

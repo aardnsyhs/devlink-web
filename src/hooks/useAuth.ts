@@ -10,6 +10,7 @@ import {
 } from "@/lib/validations/auth";
 import { toast } from "sonner";
 import { getApiErrorMessage } from "@/lib/api-error";
+import { withQueryTelemetry } from "@/lib/query-telemetry";
 
 export const authKeys = {
   me: ["auth", "me"] as const,
@@ -97,7 +98,10 @@ export function useMe() {
   const { token, setUser } = useAuthStore();
   const query = useQuery({
     queryKey: authKeys.me,
-    queryFn: () => authService.me().then((r) => r.data.data.user),
+    queryFn: () =>
+      withQueryTelemetry("auth.me", () =>
+        authService.me().then((r) => r.data.data.user),
+      ),
     enabled: !!token,
     staleTime: 60 * 1000,
     retry: 1,

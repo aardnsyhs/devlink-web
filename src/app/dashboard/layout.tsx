@@ -3,7 +3,7 @@
 import { useAuthStore } from "@/store/authStore";
 import { useLogout, useMe } from "@/hooks/useAuth";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -25,7 +25,10 @@ export default function DashboardLayout({
   const { user } = useAuthStore();
   const { mutate: logout, isPending } = useLogout();
   const pathname = usePathname();
+  const router = useRouter();
   useMe();
+
+  const prefetchRoute = (href: string) => router.prefetch(href);
 
   return (
     <div className="min-h-screen flex bg-zinc-50 dark:bg-zinc-950">
@@ -33,6 +36,8 @@ export default function DashboardLayout({
         <div className="p-6 border-b border-zinc-200 dark:border-zinc-800">
           <Link
             href="/"
+            onMouseEnter={() => prefetchRoute("/")}
+            onFocus={() => prefetchRoute("/")}
             className="text-xl font-bold text-zinc-900 dark:text-white"
           >
             DevLink
@@ -48,6 +53,8 @@ export default function DashboardLayout({
               <Link
                 key={href}
                 href={href}
+                onMouseEnter={() => prefetchRoute(href)}
+                onFocus={() => prefetchRoute(href)}
                 className={cn(
                   "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
                   isActive
@@ -71,6 +78,8 @@ export default function DashboardLayout({
             <div className="flex-1 min-w-0">
               <Link
                 href="/dashboard/profile"
+                onMouseEnter={() => prefetchRoute("/dashboard/profile")}
+                onFocus={() => prefetchRoute("/dashboard/profile")}
                 className="text-sm font-medium truncate block hover:underline"
               >
                 {user?.name}
