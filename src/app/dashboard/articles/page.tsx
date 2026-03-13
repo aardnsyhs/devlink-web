@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import {
   useArticles,
   useCreateArticle,
@@ -19,27 +20,67 @@ import { ArticleSchema } from "@/lib/validations/article";
 import { Article } from "@/types/article";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Plus, Pencil, Eye } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Plus, Pencil, Eye, Search } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { id } from "date-fns/locale";
 import { toast } from "sonner";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export default function DashboardArticlesPage() {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const readUrlState = () => {
+    if (typeof window === "undefined") {
+      return {
+        page: 1,
+        search: "",
+        status: "all",
+      };
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const rawPage = Number(params.get("page") ?? "1");
+    const statusParam = params.get("status");
+
+    return {
+      page: Number.isFinite(rawPage) && rawPage > 0 ? rawPage : 1,
+      search: params.get("search") ?? "",
+      status:
+        statusParam && ["all", "draft", "published", "archived"].includes(statusParam)
+          ? statusParam
+          : "all",
+    };
+  };
+
   const [page, setPage] = useState(1);
   const [editTarget, setEditTarget] = useState<Article | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("all");
+  const [isUrlReady, setIsUrlReady] = useState(false);
+  const debouncedSearch = useDebounce(search, 400);
 
   const { data, isLoading, error, refetch } = useArticles({
     page,
     per_page: 10,
-    status: "all",
+    status,
     mine: 1,
+    ...(debouncedSearch.trim() && { search: debouncedSearch.trim() }),
   });
   const { mutate: createArticle, isPending: creating } = useCreateArticle();
   const { mutate: updateArticle, isPending: updating } = useUpdateArticle();
@@ -79,6 +120,42 @@ export default function DashboardArticlesPage() {
     }
   };
 
+  useEffect(() => {
+    const syncFromUrl = () => {
+      const urlState = readUrlState();
+      setPage(urlState.page);
+      setSearch(urlState.search);
+      setStatus(urlState.status);
+      setIsUrlReady(true);
+    };
+
+    syncFromUrl();
+    window.addEventListener("popstate", syncFromUrl);
+    return () => window.removeEventListener("popstate", syncFromUrl);
+  }, []);
+
+  useEffect(() => {
+    if (!isUrlReady) return;
+
+    const params = new URLSearchParams();
+
+    if (debouncedSearch.trim()) params.set("search", debouncedSearch.trim());
+    if (status !== "all") params.set("status", status);
+    if (page > 1) params.set("page", String(page));
+
+    const nextQuery = params.toString();
+    const currentQuery =
+      typeof window !== "undefined"
+        ? window.location.search.replace(/^\?/, "")
+        : "";
+
+    if (nextQuery === currentQuery) return;
+
+    router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, {
+      scroll: false,
+    });
+  }, [debouncedSearch, isUrlReady, page, pathname, router, status]);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -109,6 +186,39 @@ export default function DashboardArticlesPage() {
             </div>
           </DialogContent>
         </Dialog>
+      </div>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative w-full sm:max-w-sm">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+            placeholder="Cari artikel..."
+            className="h-10 pl-9"
+          />
+        </div>
+        <div className="w-full sm:w-48">
+          <Select
+            value={status}
+            onValueChange={(value) => {
+              setStatus(value);
+              setPage(1);
+            }}
+          >
+            <SelectTrigger className="h-10">
+              <SelectValue placeholder="Filter status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Semua status</SelectItem>
+              <SelectItem value="published">Published</SelectItem>
+              <SelectItem value="draft">Draft</SelectItem>
+              <SelectItem value="archived">Archived</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       {error && (
         <QueryErrorBanner
