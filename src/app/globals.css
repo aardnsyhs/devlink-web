@@ -141,10 +141,22 @@
   display: block;
   position: relative;
   padding-left: 3.25rem;
+  transition:
+    background-color 160ms ease,
+    opacity 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .snippet-code-block .line.without-line-number {
   padding-left: 0;
+}
+
+.snippet-code-block .line-anchor {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3rem;
+  opacity: 0;
+  z-index: 1;
 }
 
 .snippet-code-block .line::before {
@@ -155,34 +167,94 @@
   text-align: right;
   color: rgb(113 113 122);
   user-select: none;
+  transition:
+    color 160ms ease,
+    opacity 160ms ease;
+  z-index: 2;
 }
 
 .snippet-code-block .line.without-line-number::before {
   content: none;
 }
 
+.snippet-code-block .line:hover::before,
+.snippet-code-block .line:target::before {
+  color: rgb(244 244 245);
+}
+
+.snippet-code-block .line:hover .line-anchor,
+.snippet-code-block .line:target .line-anchor,
+.snippet-code-block .line:focus-within .line-anchor {
+  opacity: 1;
+}
+
 .snippet-code-block .line.is-highlighted {
   background: rgb(161 161 170 / 0.14);
 }
 
+.snippet-code-block .line.is-focused {
+  background: rgb(59 130 246 / 0.08);
+}
+
+.snippet-code-block .line.is-added {
+  background:
+    linear-gradient(90deg, rgb(34 197 94 / 0.18), transparent 28%),
+    rgb(34 197 94 / 0.05);
+  box-shadow: inset 3px 0 0 rgb(34 197 94 / 0.9);
+}
+
+.snippet-code-block .line.is-removed {
+  background:
+    linear-gradient(90deg, rgb(239 68 68 / 0.18), transparent 28%),
+    rgb(239 68 68 / 0.05);
+  box-shadow: inset 3px 0 0 rgb(239 68 68 / 0.9);
+}
+
 .snippet-code-block .line.is-dimmed {
-  opacity: 0.55;
+  opacity: 0.4;
 }
 
 .snippet-code-block .line:target {
-  background: rgb(59 130 246 / 0.12);
-  box-shadow: inset 3px 0 0 rgb(59 130 246 / 0.9);
+  background: rgb(59 130 246 / 0.16);
+  box-shadow:
+    inset 4px 0 0 rgb(59 130 246 / 0.95),
+    inset 0 0 0 1px rgb(59 130 246 / 0.18);
 }
 
 .dark .snippet-code-block .line::before {
   color: rgb(82 82 91);
 }
 
+.dark .snippet-code-block .line:hover::before,
+.dark .snippet-code-block .line:target::before {
+  color: rgb(250 250 250);
+}
+
 .dark .snippet-code-block .line.is-highlighted {
   background: rgb(63 63 70 / 0.3);
 }
 
+.dark .snippet-code-block .line.is-focused {
+  background: rgb(96 165 250 / 0.1);
+}
+
+.dark .snippet-code-block .line.is-added {
+  background:
+    linear-gradient(90deg, rgb(34 197 94 / 0.22), transparent 28%),
+    rgb(34 197 94 / 0.08);
+  box-shadow: inset 3px 0 0 rgb(74 222 128 / 0.95);
+}
+
+.dark .snippet-code-block .line.is-removed {
+  background:
+    linear-gradient(90deg, rgb(248 113 113 / 0.2), transparent 28%),
+    rgb(239 68 68 / 0.08);
+  box-shadow: inset 3px 0 0 rgb(248 113 113 / 0.95);
+}
+
 .dark .snippet-code-block .line:target {
-  background: rgb(96 165 250 / 0.16);
-  box-shadow: inset 3px 0 0 rgb(96 165 250 / 0.95);
+  background: rgb(96 165 250 / 0.18);
+  box-shadow:
+    inset 4px 0 0 rgb(147 197 253 / 0.98),
+    inset 0 0 0 1px rgb(96 165 250 / 0.2);
 }
